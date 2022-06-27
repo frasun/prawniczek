@@ -1,8 +1,8 @@
 export default {
     global: {
-        appName: 'Prawniczek'
+        appName: 'Prawniczek',
     },
     index: {
-        action: 'Zaczynamy'
-    }
+        action: 'Zaczynamy',
+    },
 }
