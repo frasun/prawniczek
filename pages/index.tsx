@@ -17,9 +17,9 @@ const Home: React.FC<{ categories: [Category] }> = ({ categories }) => (
         <div className='hero-content text-center flex-col'>
             <Header>{MESSAGES.global.appName}</Header>
             <div className='max-w-xl grid grid-cols-3 gap-5'>
-                {categories.map((cat: Category) => (
-                    <div key={cat.id}>
-                        <h2 className='card-title'>{cat.name}</h2>
+                {categories.map(({ id, name }) => (
+                    <div key={`item-${id}`}>
+                        <h2 className='card-title'>{name}</h2>
                     </div>
                 ))}
             </div>
