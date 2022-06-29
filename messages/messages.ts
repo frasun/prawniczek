@@ -5,4 +5,8 @@ export default {
     index: {
         action: 'Zaczynamy',
     },
+    form: {
+        next: 'Dalej',
+        back: 'Cofnij'
+    }
 }
