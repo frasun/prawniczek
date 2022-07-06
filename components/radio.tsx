@@ -1,11 +1,12 @@
 import { FC } from 'react'
-import { QuestionOptions, Answer } from '../utils/types'
+import { QuestionTypeOptions, Answer } from '../utils/types'
 
 type RadioProps = { options: Required<Answer>[] } & Required<
-    Pick<QuestionOptions, 'current' | 'onValueChange'>
->
+    Pick<QuestionTypeOptions, 'current' | 'onValueChange'>
+> &
+    Pick<QuestionTypeOptions, 'answer'>
 
-const Radio: FC<RadioProps> = ({ options, current, onValueChange }) => (
+const Radio: FC<RadioProps> = ({ options, onValueChange, answer }) => (
     <fieldset>
         {options.map(({ ref, label, next }) => (
             <div
@@ -17,9 +18,10 @@ const Radio: FC<RadioProps> = ({ options, current, onValueChange }) => (
                     <input
                         id={ref}
                         type='radio'
-                        name={current}
                         className='radio'
-                        onChange={() => onValueChange(next)}
+                        name='radio'
+                        onChange={() => onValueChange({ next, ref })}
+                        defaultChecked={answer === ref}
                     />
                     <span className='label-text ml-4'>{label}</span>
                 </label>

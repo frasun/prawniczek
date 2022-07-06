@@ -22,14 +22,14 @@ const API:ApiType = {
     category: {
         url: `${API_URL.xano}/category`
     },
-    form: {
-        url: `${API_URL.tf}/forms/`,
+    forms: {
+        url: `${API_URL.tf}/forms`,
         headers: API_HEADERS.tf
     }
 }
 
 export async function getFromApi<T>(endpoint: string, params?: string|string[]): Promise<T> {
-    const url = params ? `${API[endpoint].url}${params}` : API[endpoint].url
+    const url = params ? `${API[endpoint].url}/${params}` : API[endpoint].url
     const headers = API[endpoint].headers || {}
     const response = await fetch(url, {headers})
     return await response.json()

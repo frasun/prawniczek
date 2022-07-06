@@ -3,7 +3,7 @@ import ShortText from './shortText'
 import LongText from './longText'
 import MultipleChoice from './multipleChoices'
 import Radio from './radio'
-import { QuestionOptions, ComponentLib } from '../utils/types'
+import { QuestionTypeOptions, ComponentLib } from '../utils/types'
 
 type ComponentsType = Record<ComponentLib, FC<any>>
 
@@ -14,7 +14,7 @@ const components: ComponentsType = {
     dropdown: Radio,
 }
 
-function questionType({ type, ...props }: QuestionOptions) {
+function questionType({ type, ...props }: QuestionTypeOptions) {
     const Component = components[type]
 
     return <Component {...props} />

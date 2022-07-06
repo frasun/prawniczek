@@ -1,15 +1,17 @@
 import { FC } from 'react'
-import { QuestionOptions } from '../utils/types'
+import { QuestionTypeOptions } from '../utils/types'
 
-type ShortTextProps = Pick<QuestionOptions, 'onValueChange'>
+type ShortTextProps = Pick<QuestionTypeOptions, 'onValueChange' | 'answer'>
 
-const ShortText: FC<ShortTextProps> = ({ onValueChange }) => (
+const ShortText: FC<ShortTextProps> = ({ onValueChange, answer }) => (
     <input
         type='text'
         className='input input-bordered w-full'
+        spellCheck='false'
         onChange={(e) => {
-            onValueChange(e.target.value.length > 0)
+            onValueChange(e.target.value)
         }}
+        defaultValue={answer}
     />
 )
 

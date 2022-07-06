@@ -27,7 +27,7 @@ const Home: React.FC<{ categories: Categories }> = ({ categories }) => (
                 </div>
             ))}
         </div>
-        <Link href='/form/c4CFmi0z'>
+        <Link href='/forms'>
             <button className='btn btn-primary mt-6'>
                 {MESSAGES.index.action}
             </button>
