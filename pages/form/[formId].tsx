@@ -90,7 +90,9 @@ function getNextQuestionForChoice(
     const fieldWithLogic = hasLogic(logic, questionRef)
 
     return fieldWithLogic
-        ? getLogicItem(fieldWithLogic, choiceRef).details.to.value
+        ? getLogicItem(fieldWithLogic, choiceRef)
+            ? getLogicItem(fieldWithLogic, choiceRef).details.to.value
+            : null
         : null
 }
 
