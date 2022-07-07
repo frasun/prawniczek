@@ -7,7 +7,7 @@ import dirIcon from '../public/icons/icon-directory.svg'
 type Breadcrumb = {
     name: string
     url?: string
-    icon?: string
+    icon?: string | null
 }
 
 interface BreadcrumbsProps {
@@ -32,6 +32,13 @@ function getIcon(icon = 'directory') {
     )
 }
 
+const renderCrumb = (name: string, icon?: string | null) => (
+    <>
+        {icon !== null && getIcon(icon)}
+        {name}
+    </>
+)
+
 const Breadcrumbs: FC<BreadcrumbsProps> = ({ items }) => (
     <nav className='text-sm breadcrumbs'>
         <ul>
@@ -39,16 +46,10 @@ const Breadcrumbs: FC<BreadcrumbsProps> = ({ items }) => (
                 <li key={name}>
                     {url ? (
                         <Link href={url}>
-                            <a href={url}>
-                                {getIcon(icon)}
-                                {name}
-                            </a>
+                            <a href={url}>{renderCrumb(name, icon)}</a>
                         </Link>
                     ) : (
-                        <>
-                            {getIcon(icon)}
-                            {name}
-                        </>
+                        renderCrumb(name, icon)
                     )}
                 </li>
             ))}

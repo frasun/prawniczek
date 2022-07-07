@@ -75,10 +75,7 @@ export type Unarray<T> = T extends Array<infer U> ? U : T
 
 export type QuestionOptions = Unarray<FormType['form']['questions']>
 
-export type SingleChoiceAnswer = Omit<
-    Unarray<NonNullable<QuestionOptions['options']>>,
-    'label'
->
+export type SingleChoiceAnswer = Omit<Required<Answer>,'label'>
 export type MultiChoiceAnswer = { ref: string; checked: boolean }
 
 export interface QuestionTypeOptions {
@@ -88,3 +85,5 @@ export interface QuestionTypeOptions {
     current?: string,
     answer?: string | string[]
 }
+
+export type FormTitle = FormType['form']['formTitle']

@@ -1,12 +1,15 @@
 import { useState, useEffect, FC } from 'react'
 import { useRouter } from 'next/router'
 import Head from 'next/head'
+import Link from 'next/link'
 import { GetServerSideProps } from 'next'
 import styled from 'styled-components'
 
 import QuestionType from '../../../components/questionType'
 import Breadcrums from '../../../components/breadcrumbs'
 import MESSAGES from '../../../messages/messages'
+import { getFromStore } from '../../../utils/helpers'
+import { FORM, ANSWERS } from '../../../utils/constants'
 
 import {
     ComponentLib,
@@ -14,14 +17,13 @@ import {
     SingleChoiceAnswer,
     MultiChoiceAnswer,
     QuestionOptions,
+    FormTitle,
 } from '../../../utils/types'
 
 interface QuestionComponent {
     formId: string
     questionId: string
 }
-
-type FormTitle = FormType['form']['formTitle']
 
 const Footer = styled.nav.attrs(() => ({
     className: `flex w-full`,
@@ -31,9 +33,6 @@ const Footer = styled.nav.attrs(() => ({
         justify-content: space-between;
     }
 `
-
-const FORM = 'form'
-const ANSWERS = 'formAnswers'
 
 const Question: FC<QuestionComponent> = ({ formId, questionId }) => {
     const router = useRouter()
@@ -108,11 +107,6 @@ const Question: FC<QuestionComponent> = ({ formId, questionId }) => {
             }
         }
     }, [questionId, isLoading, router, formId])
-
-    function getFromStore(key: string) {
-        const field = sessionStorage.getItem(key)
-        return field ? JSON.parse(field) : null
-    }
 
     function handleValueChange(
         val: SingleChoiceAnswer | MultiChoiceAnswer | string
@@ -212,13 +206,22 @@ const Question: FC<QuestionComponent> = ({ formId, questionId }) => {
                                 {MESSAGES.form.back}
                             </button>
                         )}
-                        {!isLastQuestion && (
+                        {!isLastQuestion && nextId !== MESSAGES.form.last && (
                             <button
                                 onClick={goToNextQuestion}
                                 className='btn btn-sm'
                                 disabled={required && !isFilled}>
                                 {MESSAGES.form.next}
                             </button>
+                        )}
+                        {(isLastQuestion || nextId === MESSAGES.form.last) && (
+                            <Link href={`/form/summary`}>
+                                <button
+                                    className='btn btn-sm'
+                                    disabled={required && !isFilled}>
+                                    {MESSAGES.form.finish}
+                                </button>
+                            </Link>
                         )}
                     </Footer>
                 </>
