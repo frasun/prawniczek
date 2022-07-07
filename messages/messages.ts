@@ -7,7 +7,8 @@ export default {
     },
     form: {
         next: 'Dalej',
-        back: 'Cofnij'
+        back: 'Cofnij',
+        required: 'Odpowiedź na to pytanie jest wymagana, aby przejść dalej'
     },
     forms: {
         pageTitle: 'Dokumenty'

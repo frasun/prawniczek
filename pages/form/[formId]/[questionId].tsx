@@ -184,7 +184,16 @@ const Question: FC<QuestionComponent> = ({ formId, questionId }) => {
                     <Breadcrums items={breadcrumb} />
 
                     <header>
-                        <h1 className='text-2xl font-bold'>{questionTitle}</h1>
+                        <h1 className='text-2xl font-bold'>
+                            {questionTitle}
+                            {required && (
+                                <span
+                                    className='text-error tooltip tooltip-error'
+                                    data-tip={MESSAGES.form.required}>
+                                    *
+                                </span>
+                            )}
+                        </h1>
                         {description && <p>{description}</p>}
                     </header>
 
