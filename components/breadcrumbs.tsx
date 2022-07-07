@@ -1,26 +1,55 @@
-import { FC } from 'react'
+import { FC, SVGProps } from 'react'
+import Link from 'next/link'
+
+import newDocIcon from '../public/icons/icon-newdoc.svg'
+import dirIcon from '../public/icons/icon-directory.svg'
+
+type Breadcrumb = {
+    name: string
+    url?: string
+    icon?: string
+}
 
 interface BreadcrumbsProps {
-    items: [string]
+    items: Breadcrumb[]
+}
+
+type BreadcrumbIcon = Record<string, FC<SVGProps<SVGSVGElement>>>
+
+const BreadcrumbIcons: BreadcrumbIcon = {
+    newDocument: newDocIcon,
+    directory: dirIcon,
+}
+
+function getIcon(icon = 'directory') {
+    const IconComponent = BreadcrumbIcons[icon]
+    return (
+        <IconComponent
+            width={24}
+            height={24}
+            stroke='black'
+        />
+    )
 }
 
 const Breadcrumbs: FC<BreadcrumbsProps> = ({ items }) => (
     <nav className='text-sm breadcrumbs'>
         <ul>
-            {items.map((item) => (
-                <li key={item}>
-                    <svg
-                        xmlns='http://www.w3.org/2000/svg'
-                        fill='none'
-                        viewBox='0 0 24 24'
-                        className='w-4 h-4 mr-2 stroke-current'>
-                        <path
-                            strokeLinecap='round'
-                            strokeLinejoin='round'
-                            strokeWidth='2'
-                            d='M9 13h6m-3-3v6m5 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z'></path>
-                    </svg>
-                    {item}
+            {items.map(({ name, icon, url }) => (
+                <li key={name}>
+                    {url ? (
+                        <Link href={url}>
+                            <a href={url}>
+                                {getIcon(icon)}
+                                {name}
+                            </a>
+                        </Link>
+                    ) : (
+                        <>
+                            {getIcon(icon)}
+                            {name}
+                        </>
+                    )}
                 </li>
             ))}
         </ul>

@@ -54,6 +54,17 @@ const Question: FC<QuestionComponent> = ({ formId, questionId }) => {
     const [isFilled, setIsFilled] = useState(false)
     const [answer, setAnswer] = useState<string | string[]>()
 
+    const breadcrumb = [
+        {
+            name: MESSAGES.forms.pageTitle,
+            url: '/forms',
+        },
+        {
+            name: formTitle,
+            icon: 'newDocument',
+        },
+    ]
+
     useEffect(() => {
         const form: FormType['form'] = getFromStore(FORM)
         const answers: { [key: string]: string | string[] } =
@@ -170,7 +181,7 @@ const Question: FC<QuestionComponent> = ({ formId, questionId }) => {
                         </title>
                     </Head>
 
-                    <Breadcrums items={[formTitle]} />
+                    <Breadcrums items={breadcrumb} />
 
                     <header>
                         <h1 className='text-2xl font-bold'>{questionTitle}</h1>

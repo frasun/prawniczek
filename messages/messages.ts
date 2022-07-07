@@ -8,5 +8,8 @@ export default {
     form: {
         next: 'Dalej',
         back: 'Cofnij'
+    },
+    forms: {
+        pageTitle: 'Dokumenty'
     }
 }
