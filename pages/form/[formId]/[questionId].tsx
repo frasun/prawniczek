@@ -231,7 +231,7 @@ const Question: FC<QuestionComponent> = ({ formId, questionId }) => {
 
     return (
         <>
-            {!isLoading && (
+            {!isLoading ? (
                 <>
                     <Head>
                         <title>
@@ -293,6 +293,8 @@ const Question: FC<QuestionComponent> = ({ formId, questionId }) => {
                         )}
                     </Footer>
                 </>
+            ) : (
+                <progress className='progress'></progress>
             )}
         </>
     )

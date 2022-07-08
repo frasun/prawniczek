@@ -90,7 +90,7 @@ const Summary: FC = () => {
 
     return (
         <>
-            {!isLoading && (
+            {!isLoading ? (
                 <>
                     <Breadcrumbs items={breadcrumb} />
                     <header className='prose'>
@@ -116,6 +116,8 @@ const Summary: FC = () => {
                             )
                         )}
                 </>
+            ) : (
+                <progress className='progress'></progress>
             )}
         </>
     )

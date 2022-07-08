@@ -15,7 +15,7 @@ const Form: FC<FormType> = ({ formId, form, firstQuestionId }) => {
         router.push(`${formId}/${firstQuestionId}`)
     })
 
-    return <h1>loading</h1>
+    return <progress className='progress'></progress>
 }
 
 export default Form
