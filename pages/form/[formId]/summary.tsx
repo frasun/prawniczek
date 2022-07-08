@@ -1,18 +1,20 @@
 import { FC, useEffect, useState } from 'react'
-import { getFromStore } from '../../utils/helpers'
-import { FORM, ANSWERS } from '../../utils/constants'
+import { useRouter } from 'next/router'
+import { getFromStore } from '../../../utils/helpers'
+import { FORM, ANSWERS } from '../../../utils/constants'
 import {
     ComponentLib,
     QuestionOptions,
     FormTitle,
     FormType,
-} from '../../utils/types'
-import MESSAGES from '../../messages/messages'
-import Breadcrumbs from '../../components/breadcrumbs'
+} from '../../../utils/types'
+import MESSAGES from '../../../messages/messages'
+import Breadcrumbs from '../../../components/breadcrumbs'
 
 const textFields = [ComponentLib.shortText, ComponentLib.longText]
 
 const Summary: FC = () => {
+    const router = useRouter()
     const [formTitle, setFormTitle] = useState<FormTitle>('')
     const [questions, setQuestions] = useState<FormType['form']['questions']>()
     const [answers, setAnswers] = useState<[string, string][]>([])
@@ -34,22 +36,22 @@ const Summary: FC = () => {
     ]
 
     useEffect(() => {
-        const { formTitle, questions } = getFromStore(FORM)
+        const form = getFromStore(FORM)
         const formAnswers = getFromStore(ANSWERS)
 
         if (isLoading) {
-            setFormTitle(formTitle)
-            setQuestions(questions)
-            setAnswers(Object.entries(formAnswers))
-            setIsLoading(false)
-        }
-    }, [isLoading])
+            if (form && formAnswers) {
+                const { formTitle, questions } = form
 
-    //
-    //
-    // @todo: REMOVE EMPTY ANSWERS
-    //
-    //
+                setFormTitle(formTitle)
+                setQuestions(questions)
+                setAnswers(Object.entries(formAnswers))
+                setIsLoading(false)
+            } else {
+                router.push(`/`)
+            }
+        }
+    }, [router, isLoading])
 
     function getItems(
         questions: FormType['form']['questions'],

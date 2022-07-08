@@ -73,10 +73,9 @@ const Question: FC<QuestionComponent> = ({ formId, questionId }) => {
         const form: FormType['form'] = getFromStore(FORM)
         const answers: { [key: string]: string | string[] } =
             getFromStore(ANSWERS)
-        const answer = answers[questionId]
 
         if (isLoading) {
-            if (form) {
+            if (form && answers) {
                 const { questions, formTitle } = form
                 const currentQuestionIndex = questions.findIndex(
                     ({ id }) => id === questionId
@@ -90,6 +89,7 @@ const Question: FC<QuestionComponent> = ({ formId, questionId }) => {
                     next,
                     validation,
                 } = questions[currentQuestionIndex]
+                const answer = answers[questionId]
 
                 setFormTitle(formTitle)
                 setQuestionTitle(title)
@@ -283,7 +283,7 @@ const Question: FC<QuestionComponent> = ({ formId, questionId }) => {
                             </button>
                         )}
                         {(isLastQuestion || nextId === MESSAGES.form.last) && (
-                            <Link href={`/form/summary`}>
+                            <Link href={`/form/${formId}/summary`}>
                                 <button
                                     className='btn btn-sm'
                                     disabled={!canGoNext()}>
