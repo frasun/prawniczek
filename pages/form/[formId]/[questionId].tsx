@@ -185,8 +185,17 @@ const Question: FC<QuestionComponent> = ({ formId, questionId }) => {
     }
 
     function saveAnswer(answer: string | string[]) {
+        const hasValue = answer.length > 0
         setAnswerInStore(answer)
-        setIsFilled(answer.length > 0)
+
+        if (required) {
+            setIsFilled(hasValue)
+            if (!hasValue) {
+                setValidationMessage(MESSAGES.validations.required)
+            } else {
+                setValidationMessage(undefined)
+            }
+        }
     }
 
     function clearAnswer() {
@@ -235,13 +244,7 @@ const Question: FC<QuestionComponent> = ({ formId, questionId }) => {
                     <header>
                         <h1 className='text-2xl font-bold'>
                             {questionTitle}
-                            {required && (
-                                <span
-                                    className='text-error tooltip tooltip-error'
-                                    data-tip={MESSAGES.form.required}>
-                                    *
-                                </span>
-                            )}
+                            {required && <span className='text-error'>*</span>}
                         </h1>
                         {description && <p>{description}</p>}
                     </header>

@@ -7,8 +7,7 @@ export default {
     },
     form: {
         next: 'Dalej',
-        back: 'Cofnij',
-        required: 'Odpowiedź na to pytanie jest wymagana, aby przejść dalej',
+        back: 'Cofnij',        
         last: 'LAST_QUESTION',
         finish: 'Podsumowanie'
     },
@@ -16,6 +15,7 @@ export default {
         pageTitle: 'Dokumenty'
     },
     validations: {
-        regon: 'Numer REGON ma nieprawidłowy format'
+        regon: 'Numer REGON ma nieprawidłowy format',
+        required: 'Odpowiedź na to pytanie jest wymagana',
     }
 }
