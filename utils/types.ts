@@ -49,8 +49,15 @@ export type LogicType = {
     ref: string
     actions: [
         {
+            action: string            
             details: {
                 to: {
+                    value: string
+                }
+                target: {
+                    value: string
+                }
+                value: {
                     value: string
                 }
             }

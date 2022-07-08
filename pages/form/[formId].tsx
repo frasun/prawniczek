@@ -73,14 +73,23 @@ export function mapResponse({ title, fields, logic }: FormResponse) {
                         : fields[index + 1]
                         ? fields[index + 1].ref
                         : null,
+                    validation: hasLogic(logic, id)
+                        ? getValidator(logic, id)
+                        : null,
                 }
             }
         ),
     }
 }
 
-function getNextQuestion(questionRef: string, logic: LogicType[]): string {
-    return hasLogic(logic, questionRef).actions[0].details.to.value
+function getNextQuestion(
+    questionRef: string,
+    logic: LogicType[]
+): string | null {
+    const el = hasLogic(logic, questionRef)
+    const jumpAction = el.actions.find(({ action }) => action === 'jump')
+
+    return jumpAction ? jumpAction.details.to.value : null
 }
 
 function getNextQuestionForChoice(
@@ -105,4 +114,16 @@ function getLogicItem(fieldWithLogic: LogicType, choiceRef: string) {
 
 function hasLogic(logic: LogicType[], questionRef: string): LogicType {
     return logic.find(({ ref }) => ref === questionRef)!
+}
+
+function getValidator(logic: LogicType[], id: string) {
+    const el = hasLogic(logic, id)
+    const setAction = el.actions.find(
+        ({ action, details }) =>
+            action === 'set' &&
+            details.target &&
+            details.target.value === 'validation'
+    )
+
+    return setAction ? setAction.details.value.value : null
 }

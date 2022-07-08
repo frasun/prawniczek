@@ -14,5 +14,8 @@ export default {
     },
     forms: {
         pageTitle: 'Dokumenty'
+    },
+    validations: {
+        regon: 'Numer REGON ma nieprawidłowy format'
     }
 }

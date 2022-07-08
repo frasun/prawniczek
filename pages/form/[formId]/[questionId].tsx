@@ -10,6 +10,7 @@ import Breadcrums from '../../../components/breadcrumbs'
 import MESSAGES from '../../../messages/messages'
 import { getFromStore } from '../../../utils/helpers'
 import { FORM, ANSWERS } from '../../../utils/constants'
+import validators, { validate } from '../../../utils/validators'
 
 import {
     ComponentLib,
@@ -48,10 +49,14 @@ const Question: FC<QuestionComponent> = ({ formId, questionId }) => {
     const [required, setRequired] = useState<QuestionOptions['required']>(false)
     const [options, setOptions] = useState<QuestionOptions['options']>(null)
     const [nextId, setNextId] = useState<QuestionOptions['next']>(null)
+    const [validation, setValidation] =
+        useState<QuestionOptions['validation']>(null)
     const [isFirstQuestion, setIsFirstQuestion] = useState(false)
     const [isLastQuestion, setIsLastQuestion] = useState(false)
     const [isFilled, setIsFilled] = useState(false)
+    const [isValid, setIsValid] = useState(true)
     const [answer, setAnswer] = useState<string | string[]>()
+    const [validationMessage, setValidationMessage] = useState<string>()
 
     const breadcrumb = [
         {
@@ -76,8 +81,15 @@ const Question: FC<QuestionComponent> = ({ formId, questionId }) => {
                 const currentQuestionIndex = questions.findIndex(
                     ({ id }) => id === questionId
                 )
-                const { title, description, type, options, required, next } =
-                    questions[currentQuestionIndex]
+                const {
+                    title,
+                    description,
+                    type,
+                    options,
+                    required,
+                    next,
+                    validation,
+                } = questions[currentQuestionIndex]
 
                 setFormTitle(formTitle)
                 setQuestionTitle(title)
@@ -88,6 +100,7 @@ const Question: FC<QuestionComponent> = ({ formId, questionId }) => {
                 setIsLastQuestion(currentQuestionIndex === questions.length - 1)
                 setOptions(options)
                 setNextId(next)
+                setValidation(validation)
 
                 if (answer) {
                     setAnswer(answer)
@@ -116,7 +129,7 @@ const Question: FC<QuestionComponent> = ({ formId, questionId }) => {
         } else if (type === ComponentLib.multipleChoice) {
             handleMultipleChoiceChange(val as MultiChoiceAnswer)
         } else {
-            saveAnswer(val as string)
+            handleTextChange(val as string)
         }
     }
 
@@ -137,7 +150,30 @@ const Question: FC<QuestionComponent> = ({ formId, questionId }) => {
             answers.splice(answers.indexOf(ref), 1)
         }
 
-        saveAnswer(answers)
+        if (answers.length) {
+            saveAnswer(answers)
+        } else {
+            clearAnswer()
+            setIsFilled(false)
+        }
+    }
+
+    function handleTextChange(val: string) {
+        if (validation) {
+            const { pattern, message } = validators[validation]
+
+            if (validate(val, pattern)) {
+                saveAnswer(val)
+                setIsValid(true)
+                setValidationMessage(undefined)
+            } else {
+                setIsValid(false)
+                clearAnswer()
+                setValidationMessage(message)
+            }
+        } else {
+            saveAnswer(val)
+        }
     }
 
     function goToNextQuestion() {
@@ -153,6 +189,18 @@ const Question: FC<QuestionComponent> = ({ formId, questionId }) => {
         setIsFilled(answer.length > 0)
     }
 
+    function clearAnswer() {
+        const currentFormAnswers = getFromStore(ANSWERS)
+
+        sessionStorage.setItem(
+            'formAnswers',
+            JSON.stringify({
+                ...currentFormAnswers,
+                [questionId]: undefined,
+            })
+        )
+    }
+
     function setAnswerInStore(answer: string | string[]) {
         const currentFormAnswers = getFromStore(ANSWERS)
 
@@ -163,6 +211,13 @@ const Question: FC<QuestionComponent> = ({ formId, questionId }) => {
                 [questionId]: answer,
             })
         )
+    }
+
+    function canGoNext() {
+        return (typeof validation === 'string' ? isValid || !isFilled : true) &&
+            required
+            ? isFilled
+            : false
     }
 
     return (
@@ -191,12 +246,22 @@ const Question: FC<QuestionComponent> = ({ formId, questionId }) => {
                         {description && <p>{description}</p>}
                     </header>
 
-                    <QuestionType
-                        type={type}
-                        options={options}
-                        onValueChange={handleValueChange}
-                        answer={answer}
-                    />
+                    <div
+                        className={`w-full${
+                            validationMessage
+                                ? ' tooltip tooltip-error tooltip-bottom tooltip-open'
+                                : ''
+                        }`}
+                        data-tip={
+                            validationMessage ? validationMessage : undefined
+                        }>
+                        <QuestionType
+                            type={type}
+                            options={options}
+                            onValueChange={handleValueChange}
+                            answer={answer}
+                        />
+                    </div>
 
                     <Footer data-spaced={!isFirstQuestion}>
                         {!isFirstQuestion && (
@@ -210,7 +275,7 @@ const Question: FC<QuestionComponent> = ({ formId, questionId }) => {
                             <button
                                 onClick={goToNextQuestion}
                                 className='btn btn-sm'
-                                disabled={required && !isFilled}>
+                                disabled={!canGoNext()}>
                                 {MESSAGES.form.next}
                             </button>
                         )}
@@ -218,7 +283,7 @@ const Question: FC<QuestionComponent> = ({ formId, questionId }) => {
                             <Link href={`/form/summary`}>
                                 <button
                                     className='btn btn-sm'
-                                    disabled={required && !isFilled}>
+                                    disabled={!canGoNext()}>
                                     {MESSAGES.form.finish}
                                 </button>
                             </Link>
