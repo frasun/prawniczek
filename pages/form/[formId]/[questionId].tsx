@@ -186,7 +186,12 @@ const Question: FC<QuestionComponent> = ({ formId, questionId }) => {
 
     function saveAnswer(answer: string | string[]) {
         const hasValue = answer.length > 0
-        setAnswerInStore(answer)
+
+        if (hasValue) {
+            setAnswerInStore(answer)
+        } else {
+            clearAnswer()
+        }
 
         if (required) {
             setIsFilled(hasValue)
