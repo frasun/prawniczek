@@ -2,9 +2,9 @@ import { FC } from 'react'
 import Head from 'next/head'
 import Link from 'next/link'
 import { GetServerSideProps } from 'next'
-import MESSAGES from '../messages/messages'
-import { getFromApi } from '../utils/api'
-import Forms, { FormsType } from '../components/forms'
+import MESSAGES from '../../messages/messages'
+import { getFromApi } from '../../utils/api'
+import Forms, { FormsType } from '../../components/forms'
 
 const Form: FC<FormsType> = ({ items }) => (
     <>
@@ -22,8 +22,9 @@ const Form: FC<FormsType> = ({ items }) => (
 
 export default Form
 
-export const getServerSideProps: GetServerSideProps = async () => {
-    const items: FormsType = await getFromApi('forms')
+export const getServerSideProps: GetServerSideProps = async (router) => {
+    const { categoryId } = router.query
+    const items: FormsType = await getFromApi('forms', categoryId)
 
     return {
         props: {

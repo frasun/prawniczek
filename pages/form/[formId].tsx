@@ -23,7 +23,7 @@ export default Form
 export const getServerSideProps: GetServerSideProps = async (router) => {
     const { formId } = router.query
     const { title, fields, logic }: FormResponse = await getFromApi(
-        'forms',
+        'form',
         formId
     )
 
@@ -87,7 +87,7 @@ function getNextQuestion(
     logic: LogicType[]
 ): string | null {
     const el = hasLogic(logic, questionRef)
-    const jumpAction = el.actions.find(({ action }) => action === 'jump')
+    const jumpAction = el && el.actions.find(({ action }) => action === 'jump')
 
     return jumpAction ? jumpAction.details.to.value : null
 }
@@ -112,18 +112,23 @@ function getLogicItem(fieldWithLogic: LogicType, choiceRef: string) {
     )!
 }
 
-function hasLogic(logic: LogicType[], questionRef: string): LogicType {
-    return logic.find(({ ref }) => ref === questionRef)!
+function hasLogic(
+    logic: LogicType[] | undefined,
+    questionRef: string
+): LogicType | undefined {
+    return logic ? logic.find(({ ref }) => ref === questionRef) : undefined
 }
 
 function getValidator(logic: LogicType[], id: string) {
     const el = hasLogic(logic, id)
-    const setAction = el.actions.find(
-        ({ action, details }) =>
-            action === 'set' &&
-            details.target &&
-            details.target.value === 'validation'
-    )
+    const setAction =
+        el &&
+        el.actions.find(
+            ({ action, details }) =>
+                action === 'set' &&
+                details.target &&
+                details.target.value === 'validation'
+        )
 
     return setAction ? setAction.details.value.value : null
 }

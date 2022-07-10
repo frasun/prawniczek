@@ -11,6 +11,7 @@ const Header = styled.h1.attrs({
 interface Category {
     name: string
     id: number
+    forms: string[]
 }
 
 type Categories = [Category]
@@ -19,17 +20,21 @@ const Home: React.FC<{ categories: Categories }> = ({ categories }) => (
     <>
         <Header>{MESSAGES.global.appName}</Header>
         <div className='max-w-xl grid grid-cols-3 gap-5'>
-            {categories.map(({ id, name }) => (
-                <div key={`item-${id}`}>
-                    <h2 className='card-title truncate block text-left'>
-                        {name}
-                    </h2>
-                </div>
+            {categories.map(({ id, name, forms }) => (
+                <Link
+                    href={`/forms/${id}`}
+                    key={`item-${id}`}>
+                    <button
+                        className='btn btn-sm truncate'
+                        disabled={forms.length === 0}>
+                        {name} ({forms.length})
+                    </button>
+                </Link>
             ))}
         </div>
         <Link href='/forms'>
             <button className='btn btn-primary mt-6'>
-                {MESSAGES.index.action}
+                {MESSAGES.index.showAll}
             </button>
         </Link>
     </>

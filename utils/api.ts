@@ -1,13 +1,4 @@
-const API_URL = {
-    xano: 'https://x8ki-letl-twmt.n7.xano.io/api:fccO_oAf',
-    tf: 'https://api.typeform.com'
-}
-
-const API_HEADERS = {
-    tf: {
-        'Authorization': 'Bearer tfp_6L9DgR91KBBDbdek37F87Cf9LNVHfCtz5vd7ZxaiyrEf_3suHXH73CATfpu'
-    }
-}
+const API_URL = 'https://x8ki-letl-twmt.n7.xano.io/api:fccO_oAf'
 
 interface ApiType {
     [name: string] :{
@@ -20,11 +11,13 @@ interface ApiType {
 
 const API:ApiType = {
     category: {
-        url: `${API_URL.xano}/category`
+        url: `${API_URL}/category`
     },
     forms: {
-        url: `${API_URL.tf}/forms`,
-        headers: API_HEADERS.tf
+        url: `${API_URL}/forms`
+    },
+    form: {
+        url: `${API_URL}/form`
     }
 }
 

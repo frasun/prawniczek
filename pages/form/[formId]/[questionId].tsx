@@ -226,7 +226,7 @@ const Question: FC<QuestionComponent> = ({ formId, questionId }) => {
         return (typeof validation === 'string' ? isValid || !isFilled : true) &&
             required
             ? isFilled
-            : false
+            : true
     }
 
     return (

@@ -4,6 +4,7 @@ export default {
     },
     index: {
         action: 'Zaczynamy',
+        showAll: 'Zobacz wszystkie'
     },
     form: {
         next: 'Dalej',
@@ -12,7 +13,8 @@ export default {
         finish: 'Podsumowanie'
     },
     forms: {
-        pageTitle: 'Dokumenty'
+        pageTitle: 'Dokumenty',
+        back: 'Powrót do strony głównej'
     },
     validations: {
         regon: 'Numer REGON ma nieprawidłowy format',
