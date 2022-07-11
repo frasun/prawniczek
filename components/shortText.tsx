@@ -1,12 +1,23 @@
 import { FC } from 'react'
 import { QuestionTypeOptions } from '../utils/types'
 
-type ShortTextProps = Pick<QuestionTypeOptions, 'onValueChange' | 'answer'>
+export enum InputType {
+    text = 'text',
+    password = 'password',
+}
 
-const ShortText: FC<ShortTextProps> = ({ onValueChange, answer }) => {
+type ShortTextProps = Pick<QuestionTypeOptions, 'onValueChange' | 'answer'> & {
+    type?: InputType
+}
+
+const ShortText: FC<ShortTextProps> = ({
+    onValueChange,
+    answer,
+    type = InputType.text,
+}) => {
     return (
         <input
-            type='text'
+            type={type}
             className='input input-bordered w-full'
             spellCheck='false'
             onChange={(e) => {

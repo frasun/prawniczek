@@ -57,7 +57,7 @@ const Summary: FC = () => {
         questions: FormType['form']['questions'],
         answers: [string, string][]
     ) {
-        let items = answers.map(([key, value]) => {
+        const items = answers.map(([key, value]) => {
             const el = questions && questions.find(({ id }) => id === key)
             let answer = null
 

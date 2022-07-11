@@ -1,6 +1,8 @@
-export default {
+const messages = {
     global: {
         appName: 'Prawniczek',
+        singIn: 'Zaloguj się',
+        singOut: 'Wyloguj się'
     },
     index: {
         action: 'Zaczynamy',
@@ -19,5 +21,14 @@ export default {
     validations: {
         regon: 'Numer REGON ma nieprawidłowy format',
         required: 'Odpowiedź na to pytanie jest wymagana',
+    },
+    auth: {
+        email: 'Adres e-mail',
+        password: 'Hasło'
+    },
+    profile: {
+        title: 'Porfil użytkownika'
     }
 }
+
+export default messages

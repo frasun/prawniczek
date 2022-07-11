@@ -106,8 +106,8 @@ const Question: FC<QuestionComponent> = ({ formId, questionId }) => {
                     setAnswer(answer)
                     setIsFilled(true)
 
-                    if (type === ComponentLib['dropdown']) {
-                        const { next } = options!.find(
+                    if (type === ComponentLib['dropdown'] && options) {
+                        const { next } = options.find(
                             ({ ref }) => ref === answer
                         )!
                         setNextId(next)
@@ -142,7 +142,7 @@ const Question: FC<QuestionComponent> = ({ formId, questionId }) => {
     function handleMultipleChoiceChange(val: MultiChoiceAnswer) {
         const { ref, checked } = val
 
-        let answers = getFromStore(ANSWERS)[questionId] || []
+        const answers = getFromStore(ANSWERS)[questionId] || []
 
         if (checked) {
             answers.push(ref)
