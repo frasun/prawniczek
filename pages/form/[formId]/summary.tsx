@@ -1,5 +1,7 @@
 import { FC, useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
+import { withIronSessionSsr } from 'iron-session/next'
+import { sessionOptions } from '../../../utils/session'
 import { getFromStore } from '../../../utils/helpers'
 import { FORM, ANSWERS } from '../../../utils/constants'
 import {
@@ -10,10 +12,15 @@ import {
 } from '../../../utils/types'
 import MESSAGES from '../../../messages/messages'
 import Breadcrumbs from '../../../components/breadcrumbs'
+import { User } from '../../../utils/useUser'
 
 const textFields = [ComponentLib.shortText, ComponentLib.longText]
 
-const Summary: FC = () => {
+interface SummaryProps {
+    user: User
+}
+
+const Summary: FC<SummaryProps> = ({ user }) => {
     const router = useRouter()
     const [formTitle, setFormTitle] = useState<FormTitle>('')
     const [questions, setQuestions] = useState<FormType['form']['questions']>()
@@ -115,6 +122,13 @@ const Summary: FC = () => {
                                 </div>
                             )
                         )}
+                    {user?.isLoggedIn && (
+                        <footer>
+                            <button className='btn btn-sm btn-primary'>
+                                {MESSAGES.summary.saveDocument}
+                            </button>
+                        </footer>
+                    )}
                 </>
             ) : (
                 <progress className='progress'></progress>
@@ -124,3 +138,9 @@ const Summary: FC = () => {
 }
 
 export default Summary
+
+export const getServerSideProps = withIronSessionSsr(async function ({ req }) {
+    return {
+        props: { user: req.session.user || null },
+    }
+}, sessionOptions)

@@ -1,8 +1,8 @@
 import MESSAGES from '../messages/messages'
 
 interface Validator {
-    [key:string]: {
-        pattern: RegExp,
+    [key: string]: {
+        pattern: RegExp
         message: string
     }
 }
@@ -10,8 +10,8 @@ interface Validator {
 const validators: Validator = {
     regon: {
         pattern: /^\d{9}$/,
-        message: MESSAGES.validations.regon
-    }
+        message: MESSAGES.validations.regon,
+    },
 }
 
 export default validators

@@ -1,4 +1,4 @@
-import { mapResponse } from "../pages/form/[formId]"
+import { mapResponse } from '../pages/form/[formId]'
 
 export enum ComponentLib {
     shortText = 'short_text',
@@ -49,7 +49,7 @@ export type LogicType = {
     ref: string
     actions: [
         {
-            action: string            
+            action: string
             details: {
                 to: {
                     value: string
@@ -82,14 +82,16 @@ export type Unarray<T> = T extends Array<infer U> ? U : T
 
 export type QuestionOptions = Unarray<FormType['form']['questions']>
 
-export type SingleChoiceAnswer = Omit<Required<Answer>,'label'>
+export type SingleChoiceAnswer = Omit<Required<Answer>, 'label'>
 export type MultiChoiceAnswer = { ref: string; checked: boolean }
 
 export interface QuestionTypeOptions {
     type: ComponentLib
-    onValueChange: (val: string|SingleChoiceAnswer|MultiChoiceAnswer) => void
+    onValueChange: (
+        val: string | SingleChoiceAnswer | MultiChoiceAnswer
+    ) => void
     options?: Answer[] | null
-    current?: string,
+    current?: string
     answer?: string | string[]
 }
 

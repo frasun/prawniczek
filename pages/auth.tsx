@@ -2,12 +2,15 @@ import { useState, FC } from 'react'
 import Head from 'next/head'
 import MESSAGES from '../messages/messages'
 import ShortText, { InputType } from '../components/shortText'
+import { signIn } from '../utils/session'
 
-import { signIn } from 'next-auth/react'
+import useUser from '../utils/useUser'
 
 const Auth: FC = () => {
     const [username, setUsername] = useState<string>('')
     const [password, setPassword] = useState<string>('')
+
+    const { mutateUser } = useUser()
 
     return (
         <>
@@ -45,11 +48,7 @@ const Auth: FC = () => {
                     <button
                         className='btn btn-primary'
                         onClick={() =>
-                            signIn('credentials', {
-                                username,
-                                password,
-                                callbackUrl: '/profile',
-                            })
+                            mutateUser(signIn(username, password, '/profile'))
                         }>
                         {MESSAGES.global.singIn}
                     </button>

@@ -1,12 +1,13 @@
 import { FC } from 'react'
 import Link from 'next/link'
+import { useRouter } from 'next/router'
 import MESSAGES from '../messages/messages'
-
-import { useSession, signOut } from 'next-auth/react'
+import useUser from '../utils/useUser'
+import { signOut } from '../utils/session'
 
 const Navbar: FC = () => {
-    const { data: session } = useSession()
-
+    const { user, mutateUser } = useUser()
+    const router = useRouter()
     return (
         <>
             <nav className='navbar bg-primary text-neutral-content sticky top-0 z-10'>
@@ -17,7 +18,7 @@ const Navbar: FC = () => {
                         </button>
                     </Link>
                 </div>
-                {session && (
+                {user?.isLoggedIn && (
                     <div className='navbar-center'>
                         <Link href='/profile'>
                             <button className='btn btn-ghost btn-sm'>
@@ -27,16 +28,19 @@ const Navbar: FC = () => {
                     </div>
                 )}
                 <div className='navbar-end'>
-                    {!session ? (
+                    {user?.isLoggedIn === false && (
                         <Link href='/auth'>
-                            <button className='btn btn-sm btn-ghost'>
+                            <button
+                                className='btn btn-sm btn-ghost'
+                                onClick={() => router.push('/auth')}>
                                 {MESSAGES.global.singIn}
                             </button>
                         </Link>
-                    ) : (
+                    )}
+                    {user?.isLoggedIn && (
                         <button
                             className='btn btn-sm btn-ghost'
-                            onClick={() => signOut({ callbackUrl: '/' })}>
+                            onClick={() => mutateUser(signOut())}>
                             {MESSAGES.global.singOut}
                         </button>
                     )}
