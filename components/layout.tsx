@@ -1,7 +1,7 @@
-import React, { FC } from 'react'
+import { FC, ReactElement } from 'react'
 import Navbar from './navbar'
 
-const Layout: FC<any> = ({ children }) => (
+const Layout: FC<{ children: ReactElement }> = ({ children }) => (
     <>
         <Navbar />
         <main className='hero flex-auto'>

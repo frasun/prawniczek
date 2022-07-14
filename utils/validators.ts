@@ -1,4 +1,4 @@
-import MESSAGES from '../messages/messages'
+import MESSAGES from '../constants/messages'
 
 interface Validator {
     [key: string]: {

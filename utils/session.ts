@@ -26,7 +26,7 @@ export async function signIn(
 ) {
     const redirect = redirectTo || window.location.href
 
-    const a = await fetch('/api/login', {
+    const response = await fetch('/api/login', {
         method: 'POST',
         body: JSON.stringify({ username, password }),
         headers: {
@@ -35,7 +35,7 @@ export async function signIn(
     })
     Router.push(redirect)
 
-    return a.json()
+    return response.json()
 }
 
 export async function signOut(redirectTo?: string) {

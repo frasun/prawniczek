@@ -1,7 +1,7 @@
 import React from 'react'
 import Link from 'next/link'
 import styled from 'styled-components'
-import MESSAGES from '../messages/messages'
+import MESSAGES from '../constants/messages'
 import { getFromApi } from '../utils/api'
 
 const Header = styled.h1.attrs({

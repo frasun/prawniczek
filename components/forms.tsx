@@ -1,6 +1,6 @@
 import { FC } from 'react'
 import Link from 'next/link'
-import MESSAGES from '../messages/messages'
+import MESSAGES from '../constants/messages'
 
 export interface FormsType {
     items: [

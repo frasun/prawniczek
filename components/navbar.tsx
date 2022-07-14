@@ -1,7 +1,7 @@
 import { FC } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import MESSAGES from '../messages/messages'
+import MESSAGES from '../constants/messages'
 import useUser from '../utils/useUser'
 import { signOut } from '../utils/session'
 

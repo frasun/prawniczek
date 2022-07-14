@@ -7,9 +7,9 @@ import styled from 'styled-components'
 
 import QuestionType from '../../../components/questionType'
 import Breadcrums from '../../../components/breadcrumbs'
-import MESSAGES from '../../../messages/messages'
-import { getFromStore } from '../../../utils/helpers'
-import { FORM, ANSWERS } from '../../../utils/constants'
+import MESSAGES from '../../../constants/messages'
+import { getFromStore } from '../../../utils/storage'
+import { FORM, ANSWERS } from '../../../constants/store'
 import validators, { validate } from '../../../utils/validators'
 
 import {

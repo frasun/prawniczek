@@ -29,9 +29,15 @@ const messages = {
     profile: {
         title: 'Porfil użytkownika',
         newDocument: 'Nowy dokument',
+        empty: 'Brak dokumentów do wyświetlenia',
     },
     summary: {
         saveDocument: 'Zapisz dokument',
+    },
+    document: {
+        createdAt: 'Utworzono',
+        templateName: 'Szablon',
+        summary: 'Zobacz podsumowanie',
     },
 }
 

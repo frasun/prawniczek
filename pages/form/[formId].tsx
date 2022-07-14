@@ -2,7 +2,7 @@ import { FC, useEffect } from 'react'
 import { useRouter } from 'next/router'
 import { GetServerSideProps } from 'next'
 import { getFromApi } from '../../utils/api'
-import MESSAGES from '../../messages/messages'
+import MESSAGES from '../../constants/messages'
 import { FormResponse, LogicType, FormType } from '../../utils/types'
 
 const Form: FC<FormType> = ({ formId, form, firstQuestionId }) => {

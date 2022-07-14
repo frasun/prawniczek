@@ -1,6 +1,6 @@
 import { useState, FC } from 'react'
 import Head from 'next/head'
-import MESSAGES from '../messages/messages'
+import MESSAGES from '../constants/messages'
 import ShortText, { InputType } from '../components/shortText'
 import { signIn } from '../utils/session'
 

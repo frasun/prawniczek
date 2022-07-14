@@ -2,29 +2,24 @@ import { FC, useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import { withIronSessionSsr } from 'iron-session/next'
 import { sessionOptions } from '../../../utils/session'
-import { getFromStore } from '../../../utils/helpers'
-import { FORM, ANSWERS } from '../../../utils/constants'
-import {
-    ComponentLib,
-    QuestionOptions,
-    FormTitle,
-    FormType,
-} from '../../../utils/types'
-import MESSAGES from '../../../messages/messages'
+import { getFromStore } from '../../../utils/storage'
+import { FORM, ANSWERS } from '../../../constants/store'
+import { FormTitle, FormAnswer, FormQuestions } from '../../../utils/types'
+import MESSAGES from '../../../constants/messages'
 import Breadcrumbs from '../../../components/breadcrumbs'
 import { User } from '../../../utils/useUser'
-
-const textFields = [ComponentLib.shortText, ComponentLib.longText]
+import getItems from '../../../utils/summary'
 
 interface SummaryProps {
     user: User
+    formId: string
 }
 
-const Summary: FC<SummaryProps> = ({ user }) => {
+const Summary: FC<SummaryProps> = ({ user, formId }) => {
     const router = useRouter()
     const [formTitle, setFormTitle] = useState<FormTitle>('')
-    const [questions, setQuestions] = useState<FormType['form']['questions']>()
-    const [answers, setAnswers] = useState<[string, string][]>([])
+    const [questions, setQuestions] = useState<FormQuestions>()
+    const [answers, setAnswers] = useState<FormAnswer[]>([])
     const [isLoading, setIsLoading] = useState(true)
 
     const breadcrumb = [
@@ -60,39 +55,23 @@ const Summary: FC<SummaryProps> = ({ user }) => {
         }
     }, [router, isLoading])
 
-    function getItems(
-        questions: FormType['form']['questions'],
-        answers: [string, string][]
-    ) {
-        const items = answers.map(([key, value]) => {
-            const el = questions && questions.find(({ id }) => id === key)
-            let answer = null
+    async function saveDocument() {
+        const document = {
+            template_id: formId,
+            answers: JSON.stringify(answers),
+        }
 
-            if (el) {
-                const { options, type } = el
-
-                answer = textFields.includes(type)
-                    ? value
-                    : Array.isArray(value)
-                    ? value.map((val) => getChoiceAnswer(val, options))
-                    : getChoiceAnswer(value, options)
-            }
-
-            return {
-                question: el ? el.title : null,
-                answer,
-            }
+        const response = await fetch('/api/document', {
+            method: 'post',
+            body: JSON.stringify(document),
+            headers: {
+                'Content-type': 'application/json',
+            },
         })
 
-        return items
-    }
-
-    function getChoiceAnswer(
-        choiceRef: string,
-        options: QuestionOptions['options']
-    ) {
-        const el = options && options.find(({ ref }) => ref === choiceRef)
-        return el ? el.label : null
+        if (response.ok) {
+            router.push('/profile')
+        }
     }
 
     return (
@@ -124,7 +103,9 @@ const Summary: FC<SummaryProps> = ({ user }) => {
                         )}
                     {user?.isLoggedIn && (
                         <footer>
-                            <button className='btn btn-sm btn-primary'>
+                            <button
+                                className='btn btn-sm btn-primary'
+                                onClick={saveDocument}>
                                 {MESSAGES.summary.saveDocument}
                             </button>
                         </footer>
@@ -139,8 +120,13 @@ const Summary: FC<SummaryProps> = ({ user }) => {
 
 export default Summary
 
-export const getServerSideProps = withIronSessionSsr(async function ({ req }) {
+export const getServerSideProps = withIronSessionSsr(async function ({
+    req,
+    query,
+}) {
+    const { formId } = query
     return {
-        props: { user: req.session.user || null },
+        props: { user: req.session.user || null, formId },
     }
-}, sessionOptions)
+},
+sessionOptions)

@@ -10,6 +10,7 @@ const API: ApiType = {
     form: `${API_URL}/form`,
     login: `${API_URL}/auth/login`,
     user: `${API_URL}/auth/me`,
+    document: `${API_URL}/document`,
 }
 
 export async function getFromApi<T>(

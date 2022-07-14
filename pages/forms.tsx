@@ -2,7 +2,7 @@ import { FC } from 'react'
 import Head from 'next/head'
 import Link from 'next/link'
 import { GetServerSideProps } from 'next'
-import MESSAGES from '../messages/messages'
+import MESSAGES from '../constants/messages'
 import { getFromApi } from '../utils/api'
 import Forms, { FormsType } from '../components/forms'
 
