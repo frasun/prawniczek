@@ -22,17 +22,25 @@ const Profile: FC<{ documents: Document[] }> = ({ documents }) => (
         {documents.length &&
             documents.map(
                 (
-                    { created_at: createdAt, title, document_id: documentId },
+                    {
+                        created_at: createdAt,
+                        title,
+                        document_id: documentId,
+                        template,
+                    },
                     index
                 ) => (
-                    <div key={`${index}`}>
-                        <h3>
-                            {MESSAGES.document.templateName}: {title}
-                        </h3>
-                        <h5>
+                    <div
+                        key={`${index}`}
+                        className='prose'>
+                        <h4>{title.length ? title : template}</h4>
+                        <h6>
+                            {MESSAGES.document.templateName}: {template}
+                        </h6>
+                        <h6>
                             {MESSAGES.document.createdAt}:{' '}
                             {format(createdAt, DATE_FORMAT)}
-                        </h5>
+                        </h6>
                         <Link href={`/document/${documentId}/summary`}>
                             <button className='btn btn-sm btn-primary'>
                                 {MESSAGES.document.summary}

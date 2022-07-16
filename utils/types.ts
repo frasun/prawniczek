@@ -102,7 +102,8 @@ export type FormAnswer = [string, string]
 
 export interface Document {
     document_id: number
-    title: FormTitle
+    title: string
+    template: FormTitle
     questions: FormQuestions
     answers: FormAnswer[]
     created_at: Date

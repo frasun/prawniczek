@@ -13,6 +13,7 @@ const DocumentSummary: FC<Document> = ({
     questions,
     answers,
     created_at: createdAt,
+    template,
 }) => {
     return (
         <>
@@ -22,6 +23,9 @@ const DocumentSummary: FC<Document> = ({
                     {MESSAGES.document.createdAt}:{' '}
                     {format(createdAt, DATE_FORMAT)}
                 </time>
+                <div>
+                    {MESSAGES.document.templateName}: {template}
+                </div>
             </header>
             {questions &&
                 getItems(questions, answers).map(
@@ -57,7 +61,7 @@ export const getServerSideProps = withIronSessionSsr(async function ({
 }) {
     const { documentId } = query
     const { token } = req.session
-    let title, questions, answers, created_at
+    let title, questions, answers, created_at, template
 
     if (!token) {
         res.setHeader('location', '/auth')
@@ -74,9 +78,10 @@ export const getServerSideProps = withIronSessionSsr(async function ({
         questions = response.questions
         answers = response.answers
         created_at = response.created_at
+        template = response.template
     }
     return {
-        props: { title, questions, answers, created_at },
+        props: { title, questions, answers, created_at, template },
     }
 },
 sessionOptions)
