@@ -1,4 +1,4 @@
-import { useRef, useEffect, useState } from 'react'
+import { useRef, useEffect, useState, MutableRefObject } from 'react'
 import { createPortal } from 'react-dom'
 
 interface ModalProps {
@@ -7,10 +7,12 @@ interface ModalProps {
 }
 
 export default function Modal({ children, selector }: ModalProps) {
-    const ref = useRef(document.querySelector(selector))
+    const ref: MutableRefObject<Element | DocumentFragment | null> =
+        useRef(null)
     const [mounted, setMounted] = useState(false)
 
     useEffect(() => {
+        ref.current = document.querySelector(selector)
         setMounted(true)
     }, [selector])
 

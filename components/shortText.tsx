@@ -23,7 +23,7 @@ const ShortText: FC<ShortTextProps> = ({
             onChange={(e) => {
                 onValueChange(e.target.value)
             }}
-            defaultValue={answer}
+            value={answer}
         />
     )
 }

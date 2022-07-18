@@ -1,7 +1,7 @@
 import { withIronSessionApiRoute } from 'iron-session/next'
 import { NextApiRequest, NextApiResponse } from 'next'
 import { sessionOptions } from '../../utils/session'
-import { postToApi } from '../../utils/api'
+import { postToApi, putToApi } from '../../utils/api'
 
 export default withIronSessionApiRoute(docuemntRoute, sessionOptions)
 
@@ -12,7 +12,12 @@ async function docuemntRoute(req: NextApiRequest, res: NextApiResponse) {
     } = await req
 
     if (token) {
-        const response = await postToApi('document', body, token)
+        let response
+        if (req.method === 'POST') {
+            response = await postToApi('document', body, token)
+        } else if (req.method === 'PUT') {
+            response = await putToApi('document', body, token)
+        }
 
         return response.ok ? res.status(200).end() : res.send(response)
     }

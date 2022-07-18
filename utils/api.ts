@@ -43,3 +43,15 @@ export async function postToApi<T>(
     })
     return await response.json()
 }
+
+export async function putToApi<T>(endpoint: string, params: T, token?: string) {
+    const response = await fetch(API[endpoint], {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+        },
+        body: params ? JSON.stringify(params) : undefined,
+    })
+    return await response.json()
+}

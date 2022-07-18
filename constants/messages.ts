@@ -38,6 +38,8 @@ const messages = {
         createdAt: 'Utworzono',
         templateName: 'Szablon',
         summary: 'Zobacz podsumowanie',
+        rename: 'Zmień nazwę',
+        renamePlaceholder: 'Podaj nazwę dokumentu',
     },
 }
 
