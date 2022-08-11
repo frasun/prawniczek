@@ -76,7 +76,7 @@ export const getServerSideProps = withIronSessionSsr(async function ({
 
         title = response.title
         questions = response.questions
-        answers = response.answers
+        answers = Object.entries(response.answers)
         created_at = response.created_at
         template = response.template
     }

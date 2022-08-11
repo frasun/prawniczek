@@ -24,6 +24,8 @@ const Summary: FC<SummaryProps> = ({ user, formId }) => {
     const [isLoading, setIsLoading] = useState<boolean>(true)
     const [documentName, setDocumentName] = useState<string>(formTitle)
     const [showModal, setShowModal] = useState<boolean>(false)
+    const [documentId, setDocumentId] = useState<string>('')
+    const formAnswers = getFromStore(ANSWERS)
 
     const breadcrumb = [
         {
@@ -42,16 +44,16 @@ const Summary: FC<SummaryProps> = ({ user, formId }) => {
 
     useEffect(() => {
         const form = getFromStore(FORM)
-        const formAnswers = getFromStore(ANSWERS)
 
         if (isLoading) {
             if (form && formAnswers) {
-                const { formTitle, questions } = form
+                const { formTitle, questions, documentId } = form
 
                 setFormTitle(formTitle)
                 setDocumentName(formTitle)
                 setQuestions(questions)
                 setAnswers(Object.entries(formAnswers))
+                setDocumentId(documentId)
                 setIsLoading(false)
             } else {
                 router.push(`/`)
@@ -59,10 +61,10 @@ const Summary: FC<SummaryProps> = ({ user, formId }) => {
         }
     }, [router, isLoading])
 
-    async function saveDocument() {
+    async function postDocument() {
         const document = {
             template_id: formId,
-            answers: JSON.stringify(answers),
+            answers: JSON.stringify(formAnswers),
             title: documentName,
         }
 
@@ -75,8 +77,33 @@ const Summary: FC<SummaryProps> = ({ user, formId }) => {
         })
 
         if (response.ok) {
+            sessionStorage.clear()
             router.push('/profile')
         }
+    }
+
+    async function updateDocument() {
+        const document = {
+            document_id: formId,
+            answers: JSON.stringify(formAnswers),
+        }
+
+        const response = await fetch('/api/document', {
+            method: 'put',
+            body: JSON.stringify(document),
+            headers: {
+                'Content-type': 'application/json',
+            },
+        })
+
+        if (response.ok) {
+            sessionStorage.clear()
+            router.push('/profile')
+        }
+    }
+
+    function saveDocument() {
+        documentId ? updateDocument() : setShowModal(true)
     }
 
     return (
@@ -111,7 +138,7 @@ const Summary: FC<SummaryProps> = ({ user, formId }) => {
                             <footer>
                                 <button
                                     className='btn btn-sm btn-primary'
-                                    onClick={() => setShowModal(true)}>
+                                    onClick={saveDocument}>
                                     {MESSAGES.summary.saveDocument}
                                 </button>
                             </footer>
@@ -120,7 +147,7 @@ const Summary: FC<SummaryProps> = ({ user, formId }) => {
                                 setShowModal={setShowModal}
                                 documentName={documentName}
                                 setDocumentName={setDocumentName}
-                                handleSubmit={saveDocument}
+                                handleSubmit={postDocument}
                             />
                         </>
                     )}
@@ -134,13 +161,9 @@ const Summary: FC<SummaryProps> = ({ user, formId }) => {
 
 export default Summary
 
-export const getServerSideProps = withIronSessionSsr(async function ({
-    req,
-    query,
-}) {
+export const getServerSideProps = withIronSessionSsr(async ({ req, query }) => {
     const { formId } = query
     return {
         props: { user: req.session.user || null, formId },
     }
-},
-sessionOptions)
+}, sessionOptions)

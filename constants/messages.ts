@@ -40,6 +40,7 @@ const messages = {
         summary: 'Zobacz podsumowanie',
         rename: 'Zmień nazwę',
         renamePlaceholder: 'Podaj nazwę dokumentu',
+        edit: 'Edytuj',
     },
 }
 

@@ -1,16 +1,18 @@
 import { FC, useEffect } from 'react'
 import { useRouter } from 'next/router'
 import { GetServerSideProps } from 'next'
+import { withIronSessionSsr } from 'iron-session/next'
+import { sessionOptions } from '../../utils/session'
 import { getFromApi } from '../../utils/api'
 import MESSAGES from '../../constants/messages'
-import { FormResponse, LogicType, FormType } from '../../utils/types'
+import { FormResponse, LogicType, FormType, Document } from '../../utils/types'
 
-const Form: FC<FormType> = ({ formId, form, firstQuestionId }) => {
+const Form: FC<FormType> = ({ formId, form, firstQuestionId, answers }) => {
     const router = useRouter()
 
     useEffect(() => {
         sessionStorage.setItem('form', JSON.stringify(form))
-        sessionStorage.setItem('formAnswers', JSON.stringify({}))
+        sessionStorage.setItem('formAnswers', JSON.stringify(answers))
 
         router.push(`${formId}/${firstQuestionId}`)
     })
@@ -20,24 +22,48 @@ const Form: FC<FormType> = ({ formId, form, firstQuestionId }) => {
 
 export default Form
 
-export const getServerSideProps: GetServerSideProps = async (router) => {
-    const { formId } = router.query
-    const { title, fields, logic }: FormResponse = await getFromApi(
-        'form',
-        formId
-    )
+export const getServerSideProps: GetServerSideProps = withIronSessionSsr(
+    async ({ req, query }) => {
+        const { token } = req.session
+        const { formId } = query
+        let documentId,
+            answers = {}
+        let document: Document
 
-    return {
-        props: {
-            formId,
-            form: mapResponse({ title, fields, logic }),
-            firstQuestionId: fields[0].ref,
-        },
-    }
-}
+        if (token) {
+            document = await getFromApi('document', formId, token)
+            if (document.answers) {
+                documentId = document.template_id
+                answers = document.answers
+            }
+        }
 
-export function mapResponse({ title, fields, logic }: FormResponse) {
+        const form: FormResponse = await getFromApi(
+            'form',
+            documentId ? documentId : formId
+        )
+        const { title, fields, logic } = form
+
+        return {
+            props: {
+                formId,
+                form: mapResponse({ title, fields, logic, documentId }),
+                firstQuestionId: fields[0].ref,
+                answers,
+            },
+        }
+    },
+    sessionOptions
+)
+
+export function mapResponse({
+    title,
+    fields,
+    logic,
+    documentId,
+}: FormResponse) {
     return {
+        documentId: documentId || null,
         formTitle: title,
         questions: fields.map(
             (

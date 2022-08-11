@@ -90,6 +90,11 @@ const Profile: FC<{ documents: Document[] }> = ({ documents }) => {
                                 }>
                                 {MESSAGES.document.rename}
                             </button>
+                            <Link href={`/form/${documentId}`}>
+                                <button className='btn btn-sm btn-primary ml-2'>
+                                    {MESSAGES.document.edit}
+                                </button>
+                            </Link>
                         </div>
                     )
                 )}
@@ -114,10 +119,7 @@ const Profile: FC<{ documents: Document[] }> = ({ documents }) => {
 
 export default Profile
 
-export const getServerSideProps = withIronSessionSsr(async function ({
-    req,
-    res,
-}) {
+export const getServerSideProps = withIronSessionSsr(async ({ req, res }) => {
     const { token } = req.session
     let documents: Document[] = []
 
@@ -133,5 +135,4 @@ export const getServerSideProps = withIronSessionSsr(async function ({
             documents,
         },
     }
-},
-sessionOptions)
+}, sessionOptions)

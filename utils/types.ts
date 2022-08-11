@@ -33,6 +33,7 @@ export interface FormResponse {
     title: string
     fields: FieldType[]
     logic: LogicType[]
+    documentId?: string
 }
 
 export type FieldType = {
@@ -76,6 +77,7 @@ export interface FormType {
     formId: string
     form: ReturnType<typeof mapResponse>
     firstQuestionId: string
+    answers: FormAnswer[]
 }
 
 export type Unarray<T> = T extends Array<infer U> ? U : T
@@ -107,4 +109,5 @@ export interface Document {
     questions: FormQuestions
     answers: FormAnswer[]
     created_at: Date
+    template_id?: string
 }
