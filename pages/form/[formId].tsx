@@ -11,10 +11,12 @@ const Form: FC<FormType> = ({ formId, form, firstQuestionId, answers }) => {
     const router = useRouter()
 
     useEffect(() => {
+        const docId = form.documentId ?? formId
+
         sessionStorage.setItem('form', JSON.stringify(form))
         sessionStorage.setItem('formAnswers', JSON.stringify(answers))
 
-        router.push(`${formId}/${firstQuestionId}`)
+        router.push(`${docId}/${firstQuestionId}`)
     })
 
     return <progress className='progress'></progress>
@@ -27,26 +29,25 @@ export const getServerSideProps: GetServerSideProps = withIronSessionSsr(
         const { token } = req.session
         const { formId } = query
         let documentId,
+            templateId = formId,
             answers = {}
         let document: Document
 
         if (token) {
             document = await getFromApi('document', formId, token)
-            if (document.answers) {
-                documentId = document.template_id
+            if (document.created_at) {
+                documentId = formId as string
+                templateId = document.template_id
                 answers = document.answers
             }
         }
 
-        const form: FormResponse = await getFromApi(
-            'form',
-            documentId ? documentId : formId
-        )
+        const form: FormResponse = await getFromApi('form', templateId)
         const { title, fields, logic } = form
 
         return {
             props: {
-                formId,
+                formId: templateId,
                 form: mapResponse({ title, fields, logic, documentId }),
                 firstQuestionId: fields[0].ref,
                 answers,
