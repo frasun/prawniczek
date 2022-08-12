@@ -42,7 +42,7 @@ const Profile: FC<{ documents: Document[] }> = ({ documents }) => {
             setDocumentId(undefined)
             setShowModal(false)
 
-            router.reload()
+            router.push(window.location.href)
         }
     }
 
