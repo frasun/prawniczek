@@ -18,15 +18,6 @@ const Navbar: FC = () => {
                         </button>
                     </Link>
                 </div>
-                {user?.isLoggedIn && (
-                    <div className='navbar-center'>
-                        <Link href='/profile'>
-                            <button className='btn btn-ghost btn-sm'>
-                                {MESSAGES.profile.title}
-                            </button>
-                        </Link>
-                    </div>
-                )}
                 <div className='navbar-end'>
                     {user?.isLoggedIn === false && (
                         <Link href='/auth'>
@@ -38,11 +29,19 @@ const Navbar: FC = () => {
                         </Link>
                     )}
                     {user?.isLoggedIn && (
-                        <button
-                            className='btn btn-sm btn-ghost'
-                            onClick={() => mutateUser(signOut())}>
-                            {MESSAGES.global.singOut}
-                        </button>
+                        <>
+                            <span>{user.name}</span>
+                            <Link href='/profile'>
+                                <button className='btn btn-ghost btn-sm ml-2'>
+                                    {MESSAGES.profile.title}
+                                </button>
+                            </Link>
+                            <button
+                                className='btn btn-sm btn-ghost ml-2'
+                                onClick={() => mutateUser(signOut())}>
+                                {MESSAGES.global.singOut}
+                            </button>
+                        </>
                     )}
                 </div>
             </nav>

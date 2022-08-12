@@ -27,7 +27,7 @@ const messages = {
         password: 'Hasło',
     },
     profile: {
-        title: 'Porfil użytkownika',
+        title: 'Twoje dokumenty',
         newDocument: 'Nowy dokument',
         empty: 'Brak dokumentów do wyświetlenia',
     },
