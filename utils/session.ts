@@ -22,7 +22,7 @@ declare module 'iron-session' {
 export async function signIn(
     username: string,
     password: string,
-    redirectTo?: string
+    redirectTo?: string | object
 ) {
     const redirect = redirectTo || window.location.href
 

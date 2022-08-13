@@ -4,7 +4,12 @@ import { withIronSessionSsr } from 'iron-session/next'
 import { sessionOptions } from '../../../utils/session'
 import { getFromStore } from '../../../utils/storage'
 import { FORM, ANSWERS } from '../../../constants/store'
-import { FormTitle, FormAnswer, FormQuestions } from '../../../utils/types'
+import {
+    FormTitle,
+    FormAnswer,
+    FormQuestions,
+    FormAnswers,
+} from '../../../utils/types'
 import MESSAGES from '../../../constants/messages'
 import Breadcrumbs from '../../../components/breadcrumbs'
 import { User } from '../../../utils/useUser'
@@ -25,7 +30,7 @@ const Summary: FC<SummaryProps> = ({ user, formId }) => {
     const [documentName, setDocumentName] = useState<string>(formTitle)
     const [showModal, setShowModal] = useState<boolean>(false)
     const [documentId, setDocumentId] = useState<string>('')
-    const formAnswers = getFromStore(ANSWERS)
+    let formAnswers: FormAnswers
 
     const breadcrumb = [
         {
@@ -44,6 +49,7 @@ const Summary: FC<SummaryProps> = ({ user, formId }) => {
 
     useEffect(() => {
         const form = getFromStore(FORM)
+        formAnswers = getFromStore(ANSWERS)
 
         if (isLoading) {
             if (form && formAnswers) {
@@ -55,6 +61,10 @@ const Summary: FC<SummaryProps> = ({ user, formId }) => {
                 setAnswers(Object.entries(formAnswers))
                 setDocumentId(documentId)
                 setIsLoading(false)
+
+                if (router.query.save) {
+                    setShowModal(true)
+                }
             } else {
                 router.push(`/`)
             }
@@ -103,7 +113,14 @@ const Summary: FC<SummaryProps> = ({ user, formId }) => {
     }
 
     function saveDocument() {
-        documentId ? updateDocument() : setShowModal(true)
+        if (user?.isLoggedIn) {
+            documentId ? updateDocument() : setShowModal(true)
+        } else {
+            router.push({
+                pathname: '/signin',
+                query: { redirect: window.location.href },
+            })
+        }
     }
 
     return (
@@ -133,24 +150,20 @@ const Summary: FC<SummaryProps> = ({ user, formId }) => {
                                 </div>
                             )
                         )}
-                    {user?.isLoggedIn && (
-                        <>
-                            <footer>
-                                <button
-                                    className='btn btn-sm btn-primary'
-                                    onClick={saveDocument}>
-                                    {MESSAGES.summary.saveDocument}
-                                </button>
-                            </footer>
-                            <DocumentNameModal
-                                showModal={showModal}
-                                setShowModal={setShowModal}
-                                documentName={documentName}
-                                setDocumentName={setDocumentName}
-                                handleSubmit={postDocument}
-                            />
-                        </>
-                    )}
+                    <footer>
+                        <button
+                            className='btn btn-sm btn-primary'
+                            onClick={saveDocument}>
+                            {MESSAGES.summary.saveDocument}
+                        </button>
+                    </footer>
+                    <DocumentNameModal
+                        showModal={showModal}
+                        setShowModal={setShowModal}
+                        documentName={documentName}
+                        setDocumentName={setDocumentName}
+                        handleSubmit={postDocument}
+                    />
                 </>
             ) : (
                 <progress className='progress'></progress>

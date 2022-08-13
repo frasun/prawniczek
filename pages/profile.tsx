@@ -124,7 +124,7 @@ export const getServerSideProps = withIronSessionSsr(async ({ req, res }) => {
     let documents: Document[] = []
 
     if (!token) {
-        res.setHeader('location', '/auth')
+        res.setHeader('location', '/signin')
         res.statusCode = 302
         res.end()
     } else {

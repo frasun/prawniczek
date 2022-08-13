@@ -64,7 +64,7 @@ export const getServerSideProps = withIronSessionSsr(async function ({
     let title, questions, answers, created_at, template
 
     if (!token) {
-        res.setHeader('location', '/auth')
+        res.setHeader('location', '/signin')
         res.statusCode = 302
         res.end()
     } else {

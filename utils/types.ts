@@ -100,7 +100,8 @@ export interface QuestionTypeOptions {
 export type FormTitle = FormType['form']['formTitle']
 export type FormQuestions = FormType['form']['questions']
 
-export type FormAnswer = [string, string]
+export type FormAnswer = [string, string | string[]]
+export type FormAnswers = Record<string, string | string[]>
 
 export interface Document {
     document_id: number

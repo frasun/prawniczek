@@ -20,10 +20,10 @@ const Navbar: FC = () => {
                 </div>
                 <div className='navbar-end'>
                     {user?.isLoggedIn === false && (
-                        <Link href='/auth'>
+                        <Link href='/signin'>
                             <button
                                 className='btn btn-sm btn-ghost'
-                                onClick={() => router.push('/auth')}>
+                                onClick={() => router.push('/signin')}>
                                 {MESSAGES.global.singIn}
                             </button>
                         </Link>
@@ -38,7 +38,7 @@ const Navbar: FC = () => {
                             </Link>
                             <button
                                 className='btn btn-sm btn-ghost ml-2'
-                                onClick={() => mutateUser(signOut())}>
+                                onClick={() => mutateUser(signOut('/'))}>
                                 {MESSAGES.global.singOut}
                             </button>
                         </>

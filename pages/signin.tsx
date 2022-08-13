@@ -1,16 +1,23 @@
-import { useState, FC } from 'react'
+import { useState, FC, useEffect } from 'react'
 import Head from 'next/head'
+import { useRouter } from 'next/router'
 import MESSAGES from '../constants/messages'
 import ShortText, { InputType } from '../components/shortText'
 import { signIn } from '../utils/session'
-
 import useUser from '../utils/useUser'
 
-const Auth: FC = () => {
+const SignIn: FC = () => {
     const [username, setUsername] = useState<string>('')
     const [password, setPassword] = useState<string>('')
-
     const { mutateUser } = useUser()
+    const router = useRouter()
+    const redirectTo = router.query.redirect
+        ? { pathname: router.query.redirect as string, query: { save: true } }
+        : '/profile'
+
+    useEffect(() => {
+        router.prefetch('/profile')
+    }, [])
 
     return (
         <>
@@ -48,7 +55,7 @@ const Auth: FC = () => {
                     <button
                         className='btn btn-primary'
                         onClick={() =>
-                            mutateUser(signIn(username, password, '/profile'))
+                            mutateUser(signIn(username, password, redirectTo))
                         }>
                         {MESSAGES.global.singIn}
                     </button>
@@ -58,4 +65,4 @@ const Auth: FC = () => {
     )
 }
 
-export default Auth
+export default SignIn
