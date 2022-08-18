@@ -1,6 +1,7 @@
 import type { IronSessionOptions } from 'iron-session'
-import Router from 'next/router'
+import Router, { NextRouter } from 'next/router'
 import { User } from './useUser'
+import { postToApi } from '../utils/api'
 
 export const sessionOptions: IronSessionOptions = {
     password: process.env.SECRET_COOKIE_PASSWORD as string,
@@ -20,9 +21,9 @@ declare module 'iron-session' {
 }
 
 export async function signIn(
-    username: string,
-    password: string,
-    redirectTo?: string | object
+    username?: string,
+    password?: string,
+    redirectTo?: string | Partial<NextRouter>
 ) {
     const redirect = redirectTo || window.location.href
 
@@ -33,7 +34,10 @@ export async function signIn(
             'Content-type': 'application/json',
         },
     })
-    Router.push(redirect)
+
+    if (response.ok) {
+        Router.push(redirect)
+    }
 
     return response.json()
 }
@@ -43,4 +47,27 @@ export async function signOut(redirectTo?: string) {
     const a = await fetch('/api/logout', { method: 'POST' })
     Router.push(redirect)
     return a.json()
+}
+
+export async function signUp(
+    name: string,
+    email: string,
+    password: string,
+    redirectTo?: string | Partial<NextRouter>
+) {
+    const redirect = redirectTo || window.location.href
+
+    const response = await postToApi('signup', { name, email, password })
+
+    if (response.ok) {
+        Router.push(redirect)
+    } else {
+        window.alert(response.message)
+    }
+
+    return response
+}
+
+export async function magicSingIn(magicToken: string) {
+    return await postToApi('magicLogin', { maginc_token: magicToken })
 }

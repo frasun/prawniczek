@@ -4,12 +4,7 @@ import { withIronSessionSsr } from 'iron-session/next'
 import { sessionOptions } from '../../../utils/session'
 import { getFromStore } from '../../../utils/storage'
 import { FORM, ANSWERS } from '../../../constants/store'
-import {
-    FormTitle,
-    FormAnswer,
-    FormQuestions,
-    FormAnswers,
-} from '../../../utils/types'
+import { FormTitle, FormAnswer, FormQuestions } from '../../../utils/types'
 import MESSAGES from '../../../constants/messages'
 import Breadcrumbs from '../../../components/breadcrumbs'
 import { User } from '../../../utils/useUser'
@@ -30,7 +25,6 @@ const Summary: FC<SummaryProps> = ({ user, formId }) => {
     const [documentName, setDocumentName] = useState<string>(formTitle)
     const [showModal, setShowModal] = useState<boolean>(false)
     const [documentId, setDocumentId] = useState<string>('')
-    let formAnswers: FormAnswers
 
     const breadcrumb = [
         {
@@ -49,7 +43,7 @@ const Summary: FC<SummaryProps> = ({ user, formId }) => {
 
     useEffect(() => {
         const form = getFromStore(FORM)
-        formAnswers = getFromStore(ANSWERS)
+        const formAnswers = getFromStore(ANSWERS)
 
         if (isLoading) {
             if (form && formAnswers) {
@@ -74,7 +68,7 @@ const Summary: FC<SummaryProps> = ({ user, formId }) => {
     async function postDocument() {
         const document = {
             template_id: formId,
-            answers: JSON.stringify(formAnswers),
+            answers: JSON.stringify(getFromStore(ANSWERS)),
             title: documentName,
         }
 
@@ -86,16 +80,13 @@ const Summary: FC<SummaryProps> = ({ user, formId }) => {
             },
         })
 
-        if (response.ok) {
-            sessionStorage.clear()
-            router.push('/profile')
-        }
+        handleDocumentChange(response)
     }
 
     async function updateDocument() {
         const document = {
             document_id: formId,
-            answers: JSON.stringify(formAnswers),
+            answers: JSON.stringify(getFromStore(ANSWERS)),
         }
 
         const response = await fetch('/api/document', {
@@ -106,10 +97,7 @@ const Summary: FC<SummaryProps> = ({ user, formId }) => {
             },
         })
 
-        if (response.ok) {
-            sessionStorage.clear()
-            router.push('/profile')
-        }
+        handleDocumentChange(response)
     }
 
     function saveDocument() {
@@ -120,6 +108,13 @@ const Summary: FC<SummaryProps> = ({ user, formId }) => {
                 pathname: '/signin',
                 query: { redirect: window.location.href },
             })
+        }
+    }
+
+    function handleDocumentChange(response: Response) {
+        if (response.ok) {
+            sessionStorage.clear()
+            router.push('/profile')
         }
     }
 

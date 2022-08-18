@@ -3,6 +3,7 @@ const messages = {
         appName: 'Prawniczek',
         singIn: 'Zaloguj się',
         singOut: 'Wyloguj się',
+        singUp: 'Załóż konto',
     },
     index: {
         action: 'Zaczynamy',
@@ -23,8 +24,13 @@ const messages = {
         required: 'Odpowiedź na to pytanie jest wymagana',
     },
     auth: {
+        name: 'Imię',
         email: 'Adres e-mail',
         password: 'Hasło',
+        passwordConfirm: 'Powtórz hasło',
+        verify: 'Na podany przez Ciebie adres e-mail została wysłana wiadomość z linkiem weryfikującym. Otwórz link, aby potwierdzić założenie konta.',
+        verified:
+            'Dziękujemy za potwierdzenie adresu e-mail. Twoje konto zostało zweryfikowane.',
     },
     profile: {
         title: 'Twoje dokumenty',

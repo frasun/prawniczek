@@ -56,7 +56,7 @@ const Profile: FC<{ documents: Document[] }> = ({ documents }) => {
             <header>
                 <h1 className='text-2xl font-bold'>{MESSAGES.profile.title}</h1>
             </header>
-            {documents.length &&
+            {documents.length > 0 &&
                 documents.map(
                     (
                         {

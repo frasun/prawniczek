@@ -1,36 +1,36 @@
-import { useState, FC, useEffect } from 'react'
+import { useState, FC } from 'react'
 import Head from 'next/head'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import MESSAGES from '../constants/messages'
 import ShortText, { InputType } from '../components/shortText'
-import { signIn } from '../utils/session'
-import useUser from '../utils/useUser'
+import { signUp } from '../utils/session'
 
-const SignIn: FC = () => {
+const Register: FC = () => {
     const [username, setUsername] = useState<string>('')
     const [password, setPassword] = useState<string>('')
-    const { mutateUser } = useUser()
+    const [name, setName] = useState<string>('')
     const router = useRouter()
-    const redirectTo = router.query.redirect
-        ? { pathname: router.query.redirect as string, query: { save: 'true' } }
-        : '/profile'
-
-    useEffect(() => {
-        router.prefetch('/profile')
-    }, [router])
 
     return (
         <>
             <Head>
                 <title>
-                    {MESSAGES.global.appName} - {MESSAGES.global.singIn}
+                    {MESSAGES.global.appName} - {MESSAGES.global.singUp}
                 </title>
             </Head>
             <header>
-                <h1 className='text-2xl font-bold'>{MESSAGES.global.singIn}</h1>
+                <h1 className='text-2xl font-bold'>{MESSAGES.global.singUp}</h1>
             </header>
             <fieldset className='w-full'>
+                <div className='form-control w-full'>
+                    <label className='label'>
+                        <span className='label-text'>{MESSAGES.auth.name}</span>
+                    </label>
+                    <ShortText
+                        onValueChange={(val) => setName(val as string)}
+                    />
+                </div>
                 <div className='form-control w-full'>
                     <label className='label'>
                         <span className='label-text'>
@@ -56,15 +56,15 @@ const SignIn: FC = () => {
                     <button
                         className='btn btn-primary'
                         onClick={() =>
-                            mutateUser(signIn(username, password, redirectTo))
+                            signUp(name, username, password, '/signup-verify')
                         }>
-                        {MESSAGES.global.singIn}
+                        {MESSAGES.global.singUp}
                     </button>
-                    <Link href='/signup'>
+                    <Link href='/signin'>
                         <button
                             className='btn btn-sm btn-ghost ml-3'
-                            onClick={() => router.push('/signup')}>
-                            {MESSAGES.global.singUp}
+                            onClick={() => router.push('/signin')}>
+                            {MESSAGES.global.singIn}
                         </button>
                     </Link>
                 </footer>
@@ -73,4 +73,4 @@ const SignIn: FC = () => {
     )
 }
 
-export default SignIn
+export default Register

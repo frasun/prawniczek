@@ -11,6 +11,8 @@ const API: ApiType = {
     login: `${API_URL}/auth/login`,
     user: `${API_URL}/auth/me`,
     document: `${API_URL}/document`,
+    signup: `${API_URL}/auth/verify_email/signup`,
+    magicLogin: `${API_URL}/auth/verify_email/magic_login`,
 }
 
 export async function getFromApi<T>(
@@ -41,7 +43,14 @@ export async function postToApi<T>(
         },
         body: params ? JSON.stringify(params) : undefined,
     })
-    return await response.json()
+
+    const json = {
+        ...(await response.json()),
+        status: response.status,
+        ok: response.ok,
+    }
+
+    return json
 }
 
 export async function putToApi<T>(endpoint: string, params: T, token?: string) {
@@ -53,5 +62,6 @@ export async function putToApi<T>(endpoint: string, params: T, token?: string) {
         },
         body: params ? JSON.stringify(params) : undefined,
     })
+
     return await response.json()
 }

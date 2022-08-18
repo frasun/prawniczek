@@ -20,13 +20,22 @@ const Navbar: FC = () => {
                 </div>
                 <div className='navbar-end'>
                     {user?.isLoggedIn === false && (
-                        <Link href='/signin'>
-                            <button
-                                className='btn btn-sm btn-ghost'
-                                onClick={() => router.push('/signin')}>
-                                {MESSAGES.global.singIn}
-                            </button>
-                        </Link>
+                        <>
+                            <Link href='/signin'>
+                                <button
+                                    className='btn btn-sm btn-ghost'
+                                    onClick={() => router.push('/signin')}>
+                                    {MESSAGES.global.singIn}
+                                </button>
+                            </Link>
+                            <Link href='/signup'>
+                                <button
+                                    className='btn btn-sm btn-ghost'
+                                    onClick={() => router.push('/signup')}>
+                                    {MESSAGES.global.singUp}
+                                </button>
+                            </Link>
+                        </>
                     )}
                     {user?.isLoggedIn && (
                         <>
