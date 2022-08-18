@@ -45,6 +45,12 @@ const Summary: FC<SummaryProps> = ({ user, formId }) => {
         const form = getFromStore(FORM)
         const formAnswers = getFromStore(ANSWERS)
 
+        const handleRouteChange = (url: string) => {
+            if (!url.includes('redirect')) {
+                localStorage.clear()
+            }
+        }
+
         if (isLoading) {
             if (form && formAnswers) {
                 const { formTitle, questions, documentId } = form
@@ -62,6 +68,12 @@ const Summary: FC<SummaryProps> = ({ user, formId }) => {
             } else {
                 router.push(`/`)
             }
+        }
+
+        router.events.on('routeChangeStart', handleRouteChange)
+
+        return () => {
+            router.events.off('routeChangeStart', handleRouteChange)
         }
     }, [router, isLoading])
 
@@ -113,7 +125,6 @@ const Summary: FC<SummaryProps> = ({ user, formId }) => {
 
     function handleDocumentChange(response: Response) {
         if (response.ok) {
-            sessionStorage.clear()
             router.push('/profile')
         }
     }

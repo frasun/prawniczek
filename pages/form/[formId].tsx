@@ -13,8 +13,8 @@ const Form: FC<FormType> = ({ formId, form, firstQuestionId, answers }) => {
     useEffect(() => {
         const docId = form.documentId ?? formId
 
-        sessionStorage.setItem('form', JSON.stringify(form))
-        sessionStorage.setItem('formAnswers', JSON.stringify(answers))
+        localStorage.setItem('form', JSON.stringify(form))
+        localStorage.setItem('formAnswers', JSON.stringify(answers))
 
         router.push(`${docId}/${firstQuestionId}`)
     })
@@ -29,7 +29,7 @@ export const getServerSideProps: GetServerSideProps = withIronSessionSsr(
         const { token } = req.session
         const { formId } = query
         let documentId,
-            templateId = formId,
+            templateId = formId as string,
             answers = {}
         let document: Document
 
@@ -37,7 +37,7 @@ export const getServerSideProps: GetServerSideProps = withIronSessionSsr(
             document = await getFromApi('document', formId, token)
             if (document.created_at) {
                 documentId = formId as string
-                templateId = document.template_id
+                templateId = document.template_id as string
                 answers = document.answers
             }
         }
@@ -48,7 +48,13 @@ export const getServerSideProps: GetServerSideProps = withIronSessionSsr(
         return {
             props: {
                 formId: templateId,
-                form: mapResponse({ title, fields, logic, documentId }),
+                form: mapResponse({
+                    title,
+                    fields,
+                    logic,
+                    documentId,
+                    templateId,
+                }),
                 firstQuestionId: fields[0].ref,
                 answers,
             },
@@ -62,9 +68,11 @@ export function mapResponse({
     fields,
     logic,
     documentId,
+    templateId,
 }: FormResponse) {
     return {
         documentId: documentId || null,
+        templateId,
         formTitle: title,
         questions: fields.map(
             (

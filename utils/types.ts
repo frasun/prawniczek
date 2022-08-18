@@ -34,6 +34,7 @@ export interface FormResponse {
     fields: FieldType[]
     logic: LogicType[]
     documentId?: string
+    templateId: string
 }
 
 export type FieldType = {

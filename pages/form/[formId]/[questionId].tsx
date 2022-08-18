@@ -206,7 +206,7 @@ const Question: FC<QuestionComponent> = ({ formId, questionId }) => {
     function clearAnswer() {
         const currentFormAnswers = getFromStore(ANSWERS)
 
-        sessionStorage.setItem(
+        localStorage.setItem(
             'formAnswers',
             JSON.stringify({
                 ...currentFormAnswers,
@@ -218,7 +218,7 @@ const Question: FC<QuestionComponent> = ({ formId, questionId }) => {
     function setAnswerInStore(answer: string | string[]) {
         const currentFormAnswers = getFromStore(ANSWERS)
 
-        sessionStorage.setItem(
+        localStorage.setItem(
             'formAnswers',
             JSON.stringify({
                 ...currentFormAnswers,

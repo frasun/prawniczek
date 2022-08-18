@@ -1,4 +1,4 @@
-import { FC } from 'react'
+import { FC, useEffect, useState } from 'react'
 import Head from 'next/head'
 import { withIronSessionSsr } from 'iron-session/next'
 import MESSAGES from '../constants/messages'
@@ -6,6 +6,8 @@ import { postToApi } from '../utils/api'
 import { sessionOptions } from '../utils/session'
 import { signIn } from '../utils/session'
 import useUser from '../utils/useUser'
+import { getFromStore } from '../utils/storage'
+import { FORM } from '../constants/store'
 
 interface SignUpVerify {
     verified: boolean
@@ -14,6 +16,15 @@ interface SignUpVerify {
 
 const SignUpVerify: FC<SignUpVerify> = ({ verified, errorMessage }) => {
     const { mutateUser } = useUser()
+    const [redirectTo, setRedirectTo] = useState<string>('/profile')
+
+    useEffect(() => {
+        const { templateId } = getFromStore(FORM)
+
+        if (templateId) {
+            setRedirectTo(`/form/${templateId}/summary?save=true`)
+        }
+    }, [])
 
     return (
         <>
@@ -40,7 +51,7 @@ const SignUpVerify: FC<SignUpVerify> = ({ verified, errorMessage }) => {
                     <button
                         className='btn btn-primary btn-sm'
                         onClick={() =>
-                            mutateUser(signIn(undefined, undefined, '/profile'))
+                            mutateUser(signIn(undefined, undefined, redirectTo))
                         }>
                         {MESSAGES.global.singIn}
                     </button>
