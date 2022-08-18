@@ -9,7 +9,7 @@ async function loginRoute(req: NextApiRequest, res: NextApiResponse) {
     const {
         body: { username, password },
         session,
-    } = await req
+    } = req
 
     if (!session.token) {
         const { authToken } = await postToApi('login', {
@@ -18,8 +18,6 @@ async function loginRoute(req: NextApiRequest, res: NextApiResponse) {
         })
         session.token = authToken
         await session.save()
-
-        console.log(session.token)
     }
 
     const { email, name } = await getFromApi('user', undefined, session.token)
