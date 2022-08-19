@@ -20,10 +20,10 @@ const SignUpVerify: FC<SignUpVerify> = ({ verified, errorMessage }) => {
     const [redirectTo, setRedirectTo] = useState<string>('/profile')
 
     useEffect(() => {
-        const { templateId } = getFromStore(FORM)
+        const form = getFromStore(FORM)
 
-        if (templateId) {
-            setRedirectTo(`/form/${templateId}/summary?save=true`)
+        if (form?.templateId) {
+            setRedirectTo(`/form/${form.templateId}/summary?save=true`)
         }
     }, [])
 
