@@ -12,18 +12,35 @@ async function loginRoute(req: NextApiRequest, res: NextApiResponse) {
     } = req
 
     if (!session.token) {
-        const { authToken } = await postToApi('login', {
+        const response = await postToApi('login', {
             email: username,
             password,
         })
-        session.token = authToken
-        await session.save()
+
+        if (response.ok) {
+            session.token = response.authToken
+            await session.save()
+        } else {
+            return res.status(response.status).json(response)
+        }
     }
 
-    const { email, name } = await getFromApi('user', undefined, session.token)
+    if (!session.user) {
+        const userResponse = await getFromApi('user', undefined, session.token)
 
-    session.user = { email, name, isLoggedIn: true }
-    await session.save()
+        if (userResponse.ok) {
+            const { email, name } = userResponse
+            const user = { email, name, isLoggedIn: true }
 
-    return res.json({ email, name, isLoggedIn: true })
+            session.user = user
+            await session.save()
+
+            return res.json(user)
+        } else {
+            return res.status(userResponse.status).json({ isLoggedIn: false })
+        }
+    } else {
+        const { email, name } = session.user
+        return res.json({ email, name, isLoggedIn: true })
+    }
 }

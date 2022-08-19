@@ -41,7 +41,7 @@ const Home: React.FC<{ categories: Categories }> = ({ categories }) => (
 )
 
 export async function getStaticProps() {
-    const categories = await getFromApi<Categories>('category')
+    const { categories } = await getFromApi('category')
 
     return {
         props: {

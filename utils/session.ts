@@ -27,19 +27,15 @@ export async function signIn(
 ) {
     const redirect = redirectTo || window.location.href
 
-    const response = await fetch('/api/login', {
-        method: 'POST',
-        body: JSON.stringify({ username, password }),
-        headers: {
-            'Content-type': 'application/json',
-        },
-    })
+    const response = await postToApi('signin', { username, password })
 
     if (response.ok) {
         Router.push(redirect)
+    } else {
+        window.alert(response.message)
     }
 
-    return response.json()
+    return response
 }
 
 export async function signOut(redirectTo?: string) {

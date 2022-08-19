@@ -23,7 +23,7 @@ const Form: FC<FormsType> = ({ items }) => (
 export default Form
 
 export const getServerSideProps: GetServerSideProps = async () => {
-    const items: FormsType = await getFromApi('forms')
+    const { items }: FormsType = await getFromApi('forms')
 
     return {
         props: {

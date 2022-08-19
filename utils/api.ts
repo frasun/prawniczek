@@ -13,21 +13,30 @@ const API: ApiType = {
     document: `${API_URL}/document`,
     signup: `${API_URL}/auth/verify_email/signup`,
     magicLogin: `${API_URL}/auth/verify_email/magic_login`,
+    signin: '/api/login',
 }
 
-export async function getFromApi<T>(
+export async function getFromApi(
     endpoint: string,
     params?: string | string[],
     token?: string
-): Promise<T> {
+) {
     const url = params ? `${API[endpoint]}/${params}` : API[endpoint]
-    const response = await fetch(url, {
+    const request = await fetch(url, {
         method: 'GET',
         headers: {
             Authorization: `Bearer ${token}`,
         },
     })
-    return await response.json()
+
+    const { status, ok } = request
+    const response = {
+        ...(await request.json()),
+        status,
+        ok,
+    }
+
+    return response
 }
 
 export async function postToApi<T>(
@@ -35,7 +44,7 @@ export async function postToApi<T>(
     params: T,
     token?: string
 ) {
-    const response = await fetch(API[endpoint], {
+    const request = await fetch(API[endpoint], {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -44,13 +53,14 @@ export async function postToApi<T>(
         body: params ? JSON.stringify(params) : undefined,
     })
 
-    const json = {
-        ...(await response.json()),
-        status: response.status,
-        ok: response.ok,
+    const { status, ok } = request
+    const response = {
+        ...(await request.json()),
+        status,
+        ok,
     }
 
-    return json
+    return response
 }
 
 export async function putToApi<T>(endpoint: string, params: T, token?: string) {

@@ -121,18 +121,23 @@ export default Profile
 
 export const getServerSideProps = withIronSessionSsr(async ({ req, res }) => {
     const { token } = req.session
-    let documents: Document[] = []
 
     if (!token) {
         res.setHeader('location', '/signin')
         res.statusCode = 302
         res.end()
+
+        return {
+            props: {
+                documents: [],
+            },
+        }
     } else {
-        documents = await getFromApi('document', undefined, token)
-    }
-    return {
-        props: {
-            documents,
-        },
+        const { documents } = await getFromApi('document', undefined, token)
+        return {
+            props: {
+                documents,
+            },
+        }
     }
 }, sessionOptions)
