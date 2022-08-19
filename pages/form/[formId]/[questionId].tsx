@@ -3,7 +3,6 @@ import { useRouter } from 'next/router'
 import Head from 'next/head'
 import Link from 'next/link'
 import { GetServerSideProps } from 'next'
-import styled from 'styled-components'
 
 import QuestionType from '../../../components/questionType'
 import Breadcrums from '../../../components/breadcrumbs'
@@ -25,15 +24,6 @@ interface QuestionComponent {
     formId: string
     questionId: string
 }
-
-const Footer = styled.nav.attrs(() => ({
-    className: `flex w-full`,
-}))`
-    justify-content: flex-end;
-    &[data-spaced='true'] {
-        justify-content: space-between;
-    }
-`
 
 const Question: FC<QuestionComponent> = ({ formId, questionId }) => {
     const router = useRouter()
@@ -269,7 +259,10 @@ const Question: FC<QuestionComponent> = ({ formId, questionId }) => {
                         />
                     </div>
 
-                    <Footer data-spaced={!isFirstQuestion}>
+                    <footer
+                        className={`flex w-full ${
+                            isFirstQuestion ? `justify-end` : `justify-between`
+                        }`}>
                         {!isFirstQuestion && (
                             <button
                                 className='btn btn-sm'
@@ -294,7 +287,7 @@ const Question: FC<QuestionComponent> = ({ formId, questionId }) => {
                                 </button>
                             </Link>
                         )}
-                    </Footer>
+                    </footer>
                 </>
             ) : (
                 <progress className='progress'></progress>

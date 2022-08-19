@@ -1,12 +1,7 @@
 import React from 'react'
 import Link from 'next/link'
-import styled from 'styled-components'
 import MESSAGES from '../constants/messages'
 import { getFromApi } from '../utils/api'
-
-const Header = styled.h1.attrs({
-    className: 'text-5xl font-bold',
-})``
 
 interface Category {
     name: string
@@ -18,7 +13,7 @@ type Categories = [Category]
 
 const Home: React.FC<{ categories: Categories }> = ({ categories }) => (
     <>
-        <Header>{MESSAGES.global.appName}</Header>
+        <h1 className='text-5xl font-bold'>{MESSAGES.global.appName}</h1>
         <div className='max-w-xl grid grid-cols-3 gap-5'>
             {categories.map(({ id, name, forms }) => (
                 <Link
