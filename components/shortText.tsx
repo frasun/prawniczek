@@ -6,7 +6,10 @@ export enum InputType {
     password = 'password',
 }
 
-type ShortTextProps = Pick<QuestionTypeOptions, 'onValueChange' | 'answer'> & {
+export type ShortTextProps = Pick<
+    QuestionTypeOptions,
+    'onValueChange' | 'answer'
+> & {
     type?: InputType
 }
 

@@ -1,23 +1,20 @@
-import { FC } from 'react'
-import ShortText from './shortText'
-import LongText from './longText'
-import MultipleChoice from './multipleChoices'
-import Radio from './radio'
-import { QuestionTypeOptions, ComponentLib } from '../utils/types'
-
-type ComponentsType = Record<ComponentLib, FC<any>>
-
-const components: ComponentsType = {
-    short_text: ShortText,
-    long_text: LongText,
-    multiple_choice: MultipleChoice,
-    dropdown: Radio,
-}
+import ShortText, { ShortTextProps } from './shortText'
+import LongText, { LongTextProps } from './longText'
+import MultipleChoice, { MultipleChoiceProps } from './multipleChoices'
+import Radio, { RadioProps } from './radio'
+import { QuestionTypeOptions } from '../utils/types'
 
 function questionType({ type, ...props }: QuestionTypeOptions) {
-    const Component = components[type]
-
-    return <Component {...props} />
+    switch (type) {
+        case 'short_text':
+            return <ShortText {...(props as ShortTextProps)} />
+        case 'long_text':
+            return <LongText {...(props as LongTextProps)} />
+        case 'multiple_choice':
+            return <MultipleChoice {...(props as MultipleChoiceProps)} />
+        default:
+            return <Radio {...(props as RadioProps)} />
+    }
 }
 
 export default questionType

@@ -107,10 +107,8 @@ const Question: FC<QuestionComponent> = ({ formId, questionId }) => {
                     setIsFilled(true)
 
                     if (type === ComponentLib['dropdown'] && options) {
-                        const { next } = options.find(
-                            ({ ref }) => ref === answer
-                        )!
-                        setNextId(next)
+                        const option = options.find(({ ref }) => ref === answer)
+                        option && setNextId(option.next)
                     }
                 }
 

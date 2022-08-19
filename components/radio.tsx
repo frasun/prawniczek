@@ -1,7 +1,7 @@
 import { FC } from 'react'
 import { QuestionTypeOptions, Answer } from '../utils/types'
 
-type RadioProps = { options: Required<Answer>[] } & Required<
+export type RadioProps = { options: Required<Answer>[] } & Required<
     Pick<QuestionTypeOptions, 'current' | 'onValueChange'>
 > &
     Pick<QuestionTypeOptions, 'answer'>

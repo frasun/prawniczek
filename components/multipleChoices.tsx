@@ -1,7 +1,7 @@
 import { FC } from 'react'
 import { QuestionTypeOptions } from '../utils/types'
 
-type MultipleChoiceProps = Required<
+export type MultipleChoiceProps = Required<
     Pick<QuestionTypeOptions, 'options' | 'onValueChange'>
 > &
     Pick<QuestionTypeOptions, 'answer'>

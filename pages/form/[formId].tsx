@@ -133,10 +133,13 @@ function getNextQuestionForChoice(
     logic: LogicType[]
 ) {
     const fieldWithLogic = hasLogic(logic, questionRef)
+    const logicItem = fieldWithLogic
+        ? getLogicItem(fieldWithLogic, choiceRef)
+        : undefined
 
     return fieldWithLogic
-        ? getLogicItem(fieldWithLogic, choiceRef)
-            ? getLogicItem(fieldWithLogic, choiceRef).details.to.value
+        ? logicItem
+            ? logicItem.details.to.value
             : MESSAGES.form.last
         : MESSAGES.form.last
 }
@@ -144,7 +147,7 @@ function getNextQuestionForChoice(
 function getLogicItem(fieldWithLogic: LogicType, choiceRef: string) {
     return fieldWithLogic.actions.find(({ condition: { vars } }) =>
         vars.find(({ value }) => value === choiceRef)
-    )!
+    )
 }
 
 function hasLogic(
