@@ -1,18 +1,16 @@
-const API_URL = 'https://x8ki-letl-twmt.n7.xano.io/api:fccO_oAf'
-
 interface ApiType {
     [name: string]: string
 }
 
 const API: ApiType = {
-    category: `${API_URL}/category`,
-    forms: `${API_URL}/forms`,
-    form: `${API_URL}/form`,
-    login: `${API_URL}/auth/login`,
-    user: `${API_URL}/auth/me`,
-    document: `${API_URL}/document`,
-    signup: `${API_URL}/auth/verify_email/signup`,
-    magicLogin: `${API_URL}/auth/verify_email/magic_login`,
+    category: `${process.env.API_URL}/category`,
+    forms: `${process.env.API_URL}/forms`,
+    form: `${process.env.API_URL}/form`,
+    login: `${process.env.API_URL}/auth/login`,
+    user: `${process.env.API_URL}/auth/me`,
+    document: `${process.env.API_URL}/document`,
+    signup: `${process.env.API_URL}/auth/verify_email/signup`,
+    magicLogin: `${process.env.API_URL}/auth/verify_email/magic_login`,
     signin: '/api/login',
 }
 
