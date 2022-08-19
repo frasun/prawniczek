@@ -14,6 +14,7 @@ const API: ApiType = {
     document: `${publicRuntimeConfig.API_URL}/document`,
     signup: `${publicRuntimeConfig.API_URL}/auth/verify_email/signup`,
     magicLogin: `${publicRuntimeConfig.API_URL}/auth/verify_email/magic_login`,
+    resendLink: `${publicRuntimeConfig.API_URL}/auth/magic-link`,
     signin: '/api/login',
 }
 
@@ -22,7 +23,7 @@ export async function getFromApi(
     params?: string | string[],
     token?: string
 ) {
-    const url = params ? `${API[endpoint]}/${params}` : API[endpoint]
+    const url = params ? `${API[endpoint]}${params}` : API[endpoint]
     const request = await fetch(url, {
         method: 'GET',
         headers: {

@@ -24,7 +24,7 @@ export default Form
 
 export const getServerSideProps: GetServerSideProps = async (router) => {
     const { categoryId } = router.query
-    const { items }: FormsType = await getFromApi('forms', categoryId)
+    const { items }: FormsType = await getFromApi('forms', `/${categoryId}`)
 
     return {
         props: {

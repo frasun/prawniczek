@@ -34,7 +34,7 @@ export const getServerSideProps: GetServerSideProps = withIronSessionSsr(
         let document: Document
 
         if (token) {
-            document = await getFromApi('document', formId, token)
+            document = await getFromApi('document', `/${formId}`, token)
             if (document.created_at) {
                 documentId = formId as string
                 templateId = document.template_id as string
@@ -42,7 +42,7 @@ export const getServerSideProps: GetServerSideProps = withIronSessionSsr(
             }
         }
 
-        const form: FormResponse = await getFromApi('form', templateId)
+        const form: FormResponse = await getFromApi('form', `/${templateId}`)
         const { title, fields, logic } = form
 
         return {

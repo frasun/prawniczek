@@ -18,7 +18,7 @@ const Alert: FC<AlertProps> = ({ type = undefined, children }) => {
             className={`alert ${
                 type ? `alert-${type}` : `bg-base-100`
             } shadow-lg`}>
-            <div>
+            <div className='w-full'>
                 <svg
                     xmlns='http://www.w3.org/2000/svg'
                     className='stroke-current flex-shrink-0 h-6 w-6'
@@ -37,7 +37,9 @@ const Alert: FC<AlertProps> = ({ type = undefined, children }) => {
                         }
                     />
                 </svg>
-                {children}
+                <div className='flex w-full justify-between items-center gap-2'>
+                    {children}
+                </div>
             </div>
         </div>
     )

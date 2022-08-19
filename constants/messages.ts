@@ -31,6 +31,7 @@ const messages = {
         verify: 'Na podany przez Ciebie adres e-mail została wysłana wiadomość z linkiem weryfikującym. Otwórz link, aby potwierdzić założenie konta.',
         verified:
             'Dziękujemy za potwierdzenie adresu e-mail. Twoje konto zostało zweryfikowane.',
+        resend: 'Wyślij',
     },
     profile: {
         title: 'Twoje dokumenty',

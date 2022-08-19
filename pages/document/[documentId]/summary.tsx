@@ -70,7 +70,7 @@ export const getServerSideProps = withIronSessionSsr(async function ({
     } else {
         const response: DocumentResponse = await getFromApi(
             'document',
-            documentId,
+            `/${documentId}`,
             token
         )
 
