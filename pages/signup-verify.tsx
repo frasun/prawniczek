@@ -1,6 +1,7 @@
-import { FC, useEffect, useState } from 'react'
+import { ReactElement, useEffect, useState } from 'react'
 import Head from 'next/head'
 import { withIronSessionSsr } from 'iron-session/next'
+import type { NextPageWithLayout } from './_app'
 import MESSAGES from '../constants/messages'
 import { postToApi } from '../utils/api'
 import { sessionOptions } from '../utils/session'
@@ -9,13 +10,17 @@ import useUser from '../utils/useUser'
 import { getFromStore } from '../utils/storage'
 import { FORM } from '../constants/store'
 import Alert from '../components/alert'
+import LayoutBasic from '../components/layoutBaisc'
 
-interface SignUpVerify {
+interface SignUpVerifyType {
     verified: boolean
     errorMessage?: string
 }
 
-const SignUpVerify: FC<SignUpVerify> = ({ verified, errorMessage }) => {
+const SignUpVerify: NextPageWithLayout<SignUpVerifyType> = ({
+    verified,
+    errorMessage,
+}) => {
     const { mutateUser } = useUser()
     const [redirectTo, setRedirectTo] = useState<string>('/profile')
 
@@ -91,3 +96,7 @@ export const getServerSideProps = withIronSessionSsr(async ({ req, query }) => {
         },
     }
 }, sessionOptions)
+
+SignUpVerify.getLayout = function getLayout(page: ReactElement) {
+    return <LayoutBasic>{page}</LayoutBasic>
+}

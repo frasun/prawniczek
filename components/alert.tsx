@@ -16,7 +16,7 @@ const Alert: FC<AlertProps> = ({ type = undefined, children }) => {
     return (
         <div
             className={`alert ${
-                type ? `alert-${type}` : `bg-base-100`
+                type ? `bg-${type}` : `bg-base-100`
             } shadow-lg`}>
             <div>
                 <svg
