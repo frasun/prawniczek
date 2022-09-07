@@ -25,37 +25,42 @@ const Form: FC<FormType> = ({ formId, form, firstQuestionId, answers }) => {
 export default Form
 
 export const getServerSideProps: GetServerSideProps = withIronSessionSsr(
-    async ({ req, query }) => {
+    async ({ req, res, query }) => {
         const { token } = req.session
         const { formId } = query
         let documentId,
-            templateId = formId as string,
-            answers = {}
-        let document: Document
+            templateId = String(formId),
+            answers = {},
+            document: Document
 
         if (token) {
             document = await getFromApi('document', `/${formId}`, token)
             if (document.created_at) {
-                documentId = formId as string
-                templateId = document.template_id as string
+                documentId = String(formId)
+                templateId = String(document.template_id)
                 answers = document.answers
             }
         }
 
         const form: FormResponse = await getFromApi('form', `/${templateId}`)
-        const { title, fields, logic } = form
+
+        if (!form.fields) {
+            res.setHeader('location', `/signin?redirect=form/${formId}`)
+            res.statusCode = 302
+            res.end()
+        }
 
         return {
             props: {
                 formId: templateId,
                 form: mapResponse({
-                    title,
-                    fields,
-                    logic,
+                    title: form.title,
+                    fields: form.fields,
+                    logic: form.logic,
                     documentId,
                     templateId,
                 }),
-                firstQuestionId: fields[0].ref,
+                firstQuestionId: form.fields[0].ref,
                 answers,
             },
         }

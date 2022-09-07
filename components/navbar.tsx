@@ -1,4 +1,4 @@
-import { FC } from 'react'
+import { FC, useEffect, useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import MESSAGES from '../constants/messages'
@@ -7,7 +7,21 @@ import { signOut } from '../utils/session'
 
 const Navbar: FC = () => {
     const { user, mutateUser } = useUser()
+    const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false)
     const router = useRouter()
+
+    useEffect(() => {
+        if (user?.isLoggedIn) {
+            setIsLoggedIn(true)
+        } else if (user?.isLoggedIn === false) {
+            setIsLoggedIn(false)
+        }
+
+        if (isLoggedIn && user?.isLoggedIn === false) {
+            signOut()
+        }
+    }, [user?.isLoggedIn, isLoggedIn])
+
     return (
         <>
             <nav className='navbar bg-primary text-neutral-content sticky top-0 z-10'>
@@ -47,7 +61,7 @@ const Navbar: FC = () => {
                             </Link>
                             <button
                                 className='btn btn-sm btn-ghost ml-2'
-                                onClick={() => mutateUser(signOut('/'))}>
+                                onClick={() => mutateUser(signOut())}>
                                 {MESSAGES.global.singOut}
                             </button>
                         </>

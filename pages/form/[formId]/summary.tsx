@@ -118,7 +118,7 @@ const Summary: FC<SummaryProps> = ({ user, formId }) => {
         } else {
             router.push({
                 pathname: '/signin',
-                query: { redirect: window.location.href },
+                query: { redirect: window.location.href, save: true },
             })
         }
     }

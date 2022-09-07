@@ -3,21 +3,20 @@ import Router, { NextRouter } from 'next/router'
 import { User } from './useUser'
 import { postToApi } from '../utils/api'
 
-export const sessionOptions: IronSessionOptions = {
-    password: process.env.SECRET_COOKIE_PASSWORD as string,
-    cookieName: 'session',
-    // secure: true should be used in production (HTTPS) but can't be used in development (HTTP)
-    cookieOptions: {
-        secure: process.env.NODE_ENV === 'production',
-    },
-}
-
-// This is where we specify the typings of req.session.*
 declare module 'iron-session' {
     interface IronSessionData {
         user?: User
         token?: string
     }
+}
+
+export const sessionOptions: IronSessionOptions = {
+    password: process.env.SECRET_COOKIE_PASSWORD as string,
+    cookieName: 'session',
+    ttl: 86400,
+    cookieOptions: {
+        secure: process.env.NODE_ENV === 'production',
+    },
 }
 
 export async function signIn(
@@ -39,7 +38,7 @@ export async function signIn(
 }
 
 export async function signOut(redirectTo?: string) {
-    const redirect = redirectTo || window.location.href
+    const redirect = redirectTo || '/'
     const a = await fetch('/api/logout', { method: 'POST' })
     Router.push(redirect)
     return a.json()

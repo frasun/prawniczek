@@ -13,7 +13,10 @@ const SignIn: FC = () => {
     const { mutateUser } = useUser()
     const router = useRouter()
     const redirectTo = router.query.redirect
-        ? { pathname: router.query.redirect as string, query: { save: 'true' } }
+        ? {
+              pathname: String(router.query.redirect),
+              query: { save: router.query.save },
+          }
         : '/profile'
 
     useEffect(() => {
