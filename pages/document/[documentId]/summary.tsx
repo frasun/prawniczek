@@ -1,5 +1,6 @@
 import { FC } from 'react'
 import { withIronSessionSsr } from 'iron-session/next'
+import Head from 'next/head'
 import { format } from 'date-fns'
 import { sessionOptions } from '../../../utils/session'
 import { getFromApi } from '../../../utils/api'
@@ -15,8 +16,12 @@ const DocumentSummary: FC<Document> = ({
     created_at: createdAt,
     template,
 }) => {
+    const pageTitle = `${MESSAGES.global.appName} - ${title}`
     return (
         <>
+            <Head>
+                <title>{pageTitle}</title>
+            </Head>
             <header className='prose'>
                 <h1>{title}</h1>
                 <time>

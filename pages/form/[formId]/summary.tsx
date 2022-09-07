@@ -1,5 +1,6 @@
 import { FC, useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
+import Head from 'next/head'
 import { withIronSessionSsr } from 'iron-session/next'
 import { sessionOptions } from '../../../utils/session'
 import { getFromStore } from '../../../utils/storage'
@@ -25,6 +26,8 @@ const Summary: FC<SummaryProps> = ({ user, formId }) => {
     const [documentName, setDocumentName] = useState<string>(formTitle)
     const [showModal, setShowModal] = useState<boolean>(false)
     const [documentId, setDocumentId] = useState<string>('')
+
+    const pageTitle = `${MESSAGES.global.appName} - ${formTitle}`
 
     const breadcrumb = [
         {
@@ -133,6 +136,9 @@ const Summary: FC<SummaryProps> = ({ user, formId }) => {
         <>
             {!isLoading ? (
                 <>
+                    <Head>
+                        <title>{pageTitle}</title>
+                    </Head>
                     <Breadcrumbs items={breadcrumb} />
                     <header className='prose'>
                         <h1>{formTitle}</h1>

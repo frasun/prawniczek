@@ -6,19 +6,23 @@ import MESSAGES from '../constants/messages'
 import { getFromApi } from '../utils/api'
 import Forms, { FormsType } from '../components/forms'
 
-const Form: FC<FormsType> = ({ items }) => (
-    <>
-        <Head>
-            <title>{MESSAGES.global.appName}</title>
-        </Head>
-        <Forms items={items} />
-        <Link href='/'>
-            <button className='btn btn-sm btn-primary mt-6'>
-                {MESSAGES.forms.back}
-            </button>
-        </Link>
-    </>
-)
+const Form: FC<FormsType> = ({ items }) => {
+    const pageTitle = `${MESSAGES.global.appName} - ${MESSAGES.forms.pageTitle}`
+    return (
+        <>
+            <Head>
+                <title>{pageTitle}</title>
+            </Head>
+            <h1 className='text-4xl font-bold'>{MESSAGES.forms.pageTitle}</h1>
+            <Forms items={items} />
+            <Link href='/'>
+                <button className='btn btn-sm btn-primary mt-6'>
+                    {MESSAGES.forms.back}
+                </button>
+            </Link>
+        </>
+    )
+}
 
 export default Form
 

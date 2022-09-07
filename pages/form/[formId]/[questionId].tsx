@@ -48,6 +48,8 @@ const Question: FC<QuestionComponent> = ({ formId, questionId }) => {
     const [answer, setAnswer] = useState<string | string[]>()
     const [validationMessage, setValidationMessage] = useState<string>()
 
+    const pageTitle = `${MESSAGES.global.appName} - ${formTitle}`
+
     const breadcrumb = [
         {
             name: MESSAGES.forms.pageTitle,
@@ -227,9 +229,7 @@ const Question: FC<QuestionComponent> = ({ formId, questionId }) => {
             {!isLoading ? (
                 <>
                     <Head>
-                        <title>
-                            {MESSAGES.global.appName} - {formTitle}
-                        </title>
+                        <title>{pageTitle}</title>
                     </Head>
 
                     <Breadcrums items={breadcrumb} />

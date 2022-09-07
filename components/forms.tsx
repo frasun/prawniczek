@@ -9,6 +9,7 @@ export interface FormsType {
             id: string
         }
     ]
+    categoryName?: string
 }
 
 const Forms: FC<FormsType> = ({ items }) => (
