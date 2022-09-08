@@ -11,22 +11,23 @@ export default function getItems(
     questions: FormQuestions,
     answers: FormAnswer[]
 ) {
-    const items = answers.map(([key, value]) => {
-        const el = questions && questions.find(({ id }) => id === key)
-        let answer = null
+    const answerIds = answers.map((answer) => answer[0])
+    const filteredQuestions = questions.filter(({ id }) =>
+        answerIds.includes(id)
+    )
 
-        if (el) {
-            const { options, type } = el
+    const items = filteredQuestions.map(({ options, type, title, id }) => {
+        const answerIndex = answerIds.findIndex((answer) => answer === id)
+        const value = answers[answerIndex][1]
 
-            answer = textFields.includes(type)
-                ? value
-                : Array.isArray(value)
-                ? value.map((val) => getChoiceAnswer(val, options))
-                : getChoiceAnswer(value, options)
-        }
+        const answer = textFields.includes(type)
+            ? value
+            : Array.isArray(value)
+            ? value.map((val) => getChoiceAnswer(val, options))
+            : getChoiceAnswer(value, options)
 
         return {
-            question: el ? el.title : null,
+            question: title,
             answer,
         }
     })
