@@ -9,7 +9,7 @@ async function docuemntRoute(req: NextApiRequest, res: NextApiResponse) {
     const {
         body,
         session: { token },
-    } = await req
+    } = req
 
     if (token) {
         let response
