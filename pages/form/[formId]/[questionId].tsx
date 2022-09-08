@@ -177,6 +177,8 @@ const Question: FC<QuestionComponent> = ({ formId, questionId }) => {
     function saveAnswer(answer: string | string[]) {
         const hasValue = answer.length > 0
 
+        setAnswer(answer)
+
         if (hasValue) {
             setAnswerInStore(answer)
         } else {
