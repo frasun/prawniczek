@@ -20,10 +20,18 @@ const ShortText: FC<ShortTextProps> = ({
 }) => {
     const [fieldType, setFieldType] = useState<InputType>(type)
 
+    const propsValue = typeof answer === 'string' ? answer : ''
+    const [value, setValue] = useState<string>(propsValue)
+
     function togglePasswordView() {
         setFieldType(
             fieldType === InputType.text ? InputType.password : InputType.text
         )
+    }
+
+    function onChange(targetValue: string) {
+        setValue(targetValue)
+        onValueChange(targetValue)
     }
 
     return (
@@ -33,9 +41,9 @@ const ShortText: FC<ShortTextProps> = ({
                 className='input input-bordered w-full pr-[48px]'
                 spellCheck='false'
                 onChange={(e) => {
-                    onValueChange(e.target.value)
+                    onChange(e.target.value)
                 }}
-                value={answer}
+                value={value}
             />
             {type === InputType.password && (
                 <button
