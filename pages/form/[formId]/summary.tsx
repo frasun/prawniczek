@@ -5,11 +5,11 @@ import { withIronSessionSsr } from 'iron-session/next'
 import { sessionOptions } from '../../../utils/session'
 import { getFromStore } from '../../../utils/storage'
 import { FORM, ANSWERS } from '../../../constants/store'
-import { FormTitle, FormAnswer, FormQuestions } from '../../../utils/types'
+import { FormTitle, Document, FormAnswer } from '../../../utils/types'
 import MESSAGES from '../../../constants/messages'
 import Breadcrumbs from '../../../components/breadcrumbs'
 import { User } from '../../../utils/useUser'
-import getItems from '../../../utils/summary'
+import getSummary from '../../../utils/summary'
 import DocumentNameModal from '../../../components/documentNameModal'
 
 interface SummaryProps {
@@ -20,12 +20,11 @@ interface SummaryProps {
 const Summary: FC<SummaryProps> = ({ user, formId }) => {
     const router = useRouter()
     const [formTitle, setFormTitle] = useState<FormTitle>('')
-    const [questions, setQuestions] = useState<FormQuestions>()
-    const [answers, setAnswers] = useState<FormAnswer[]>([])
     const [isLoading, setIsLoading] = useState<boolean>(true)
     const [documentName, setDocumentName] = useState<string>(formTitle)
     const [showModal, setShowModal] = useState<boolean>(false)
     const [documentId, setDocumentId] = useState<string>('')
+    const [summary, setSummary] = useState<Document['summary']>([])
 
     const pageTitle = `${MESSAGES.global.appName} - ${formTitle}`
 
@@ -45,8 +44,8 @@ const Summary: FC<SummaryProps> = ({ user, formId }) => {
     ]
 
     useEffect(() => {
-        const form = getFromStore(FORM)
-        const formAnswers = getFromStore(ANSWERS)
+        const form: Document = getFromStore(FORM)
+        const formAnswers: FormAnswer = getFromStore(ANSWERS)
 
         const handleRouteChange = (url: string) => {
             if (!url.includes('redirect')) {
@@ -56,13 +55,16 @@ const Summary: FC<SummaryProps> = ({ user, formId }) => {
 
         if (isLoading) {
             if (form && formAnswers) {
-                const { formTitle, questions, documentId } = form
+                const { title, questions, document_id: documentId } = form
 
-                setFormTitle(formTitle)
-                setDocumentName(formTitle)
-                setQuestions(questions)
-                setAnswers(Object.entries(formAnswers))
+                setFormTitle(title)
+                setDocumentName(title)
                 setDocumentId(documentId)
+
+                if (questions) {
+                    setSummary(getSummary(questions, formAnswers))
+                }
+
                 setIsLoading(false)
 
                 if (router.query.save) {
@@ -84,6 +86,7 @@ const Summary: FC<SummaryProps> = ({ user, formId }) => {
         const document = {
             template_id: formId,
             answers: JSON.stringify(getFromStore(ANSWERS)),
+            summary,
             title: documentName,
         }
 
@@ -102,6 +105,7 @@ const Summary: FC<SummaryProps> = ({ user, formId }) => {
         const document = {
             document_id: formId,
             answers: JSON.stringify(getFromStore(ANSWERS)),
+            summary,
         }
 
         const response = await fetch('/api/document', {
@@ -143,25 +147,24 @@ const Summary: FC<SummaryProps> = ({ user, formId }) => {
                     <header className='prose'>
                         <h1>{formTitle}</h1>
                     </header>
-                    {questions &&
-                        getItems(questions, answers).map(
-                            ({ question, answer }, index) => (
-                                <div
-                                    key={index}
-                                    className='prose'>
-                                    <h3>{question}</h3>
-                                    {Array.isArray(answer) && answer.length ? (
-                                        <ul>
-                                            {answer.map((item, ind) => (
-                                                <li key={ind}>{item}</li>
-                                            ))}
-                                        </ul>
-                                    ) : (
-                                        <h5>{answer}</h5>
-                                    )}
-                                </div>
-                            )
-                        )}
+                    {summary &&
+                        summary.length > 0 &&
+                        summary.map(({ question, answer }, index) => (
+                            <div
+                                key={index}
+                                className='prose'>
+                                <h3>{question}</h3>
+                                {Array.isArray(answer) && answer.length ? (
+                                    <ul>
+                                        {answer.map((item, ind) => (
+                                            <li key={ind}>{item}</li>
+                                        ))}
+                                    </ul>
+                                ) : (
+                                    <h5>{answer}</h5>
+                                )}
+                            </div>
+                        ))}
                     <footer>
                         <button
                             className='btn btn-sm btn-primary'

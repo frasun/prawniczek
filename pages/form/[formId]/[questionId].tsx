@@ -68,12 +68,12 @@ const Question: FC<QuestionComponent> = ({ formId, questionId }) => {
 
         if (isLoading) {
             if (form && answers) {
-                const { questions, formTitle } = form
+                const { questions, title } = form
                 const currentQuestionIndex = questions.findIndex(
                     ({ id }) => id === questionId
                 )
                 const {
-                    title,
+                    title: Qtitle,
                     description,
                     type,
                     options,
@@ -83,8 +83,8 @@ const Question: FC<QuestionComponent> = ({ formId, questionId }) => {
                 } = questions[currentQuestionIndex]
                 const answer = answers[questionId]
 
-                setFormTitle(formTitle)
-                setQuestionTitle(title)
+                setFormTitle(title)
+                setQuestionTitle(Qtitle)
                 setDescription(description)
                 setType(type)
                 setRequired(required)

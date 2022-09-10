@@ -6,13 +6,11 @@ import { sessionOptions } from '../../../utils/session'
 import { getFromApi } from '../../../utils/api'
 import DATE_FORMAT from '../../../constants/date'
 import MESSAGES from '../../../constants/messages'
-import getItems from '../../../utils/summary'
 import { Document } from '../../../utils/types'
 
 const DocumentSummary: FC<Document> = ({
     title,
-    questions,
-    answers,
+    summary,
     created_at: createdAt,
     template,
 }) => {
@@ -32,25 +30,22 @@ const DocumentSummary: FC<Document> = ({
                     {MESSAGES.document.templateName}: {template}
                 </div>
             </header>
-            {questions &&
-                getItems(questions, answers).map(
-                    ({ question, answer }, index) => (
-                        <div
-                            key={index}
-                            className='prose'>
-                            <h3>{question}</h3>
-                            {Array.isArray(answer) && answer.length ? (
-                                <ul>
-                                    {answer.map((item, ind) => (
-                                        <li key={ind}>{item}</li>
-                                    ))}
-                                </ul>
-                            ) : (
-                                <h5>{answer}</h5>
-                            )}
-                        </div>
-                    )
-                )}
+            {summary.map(({ question, answer }, index) => (
+                <div
+                    key={index}
+                    className='prose'>
+                    <h3>{question}</h3>
+                    {Array.isArray(answer) && answer.length ? (
+                        <ul>
+                            {answer.map((item, ind) => (
+                                <li key={ind}>{item}</li>
+                            ))}
+                        </ul>
+                    ) : (
+                        <h5>{answer}</h5>
+                    )}
+                </div>
+            ))}
         </>
     )
 }
@@ -66,7 +61,7 @@ export const getServerSideProps = withIronSessionSsr(async function ({
 }) {
     const { documentId } = query
     const { token } = req.session
-    let title, questions, answers, created_at, template
+    let title, summary, created_at, template
 
     if (!token) {
         res.setHeader('location', '/signin')
@@ -80,13 +75,12 @@ export const getServerSideProps = withIronSessionSsr(async function ({
         )
 
         title = response.title
-        questions = response.questions
-        answers = Object.entries(response.answers)
+        summary = response.summary
         created_at = response.created_at
         template = response.template
     }
     return {
-        props: { title, questions, answers, created_at, template },
+        props: { title, summary, created_at, template },
     }
 },
 sessionOptions)

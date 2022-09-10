@@ -98,18 +98,18 @@ export interface QuestionTypeOptions {
     answer?: string | string[]
 }
 
-export type FormTitle = FormType['form']['formTitle']
+export type FormTitle = FormType['form']['title']
 export type FormQuestions = FormType['form']['questions']
 
-export type FormAnswer = [string, string | string[]]
-export type FormAnswers = Record<string, string | string[]>
+export type FormAnswer = { [x: string]: string | string[] }
 
 export interface Document {
-    document_id: number
+    document_id: string
     title: string
     template: FormTitle
     questions: FormQuestions
     answers: FormAnswer[]
     created_at: Date
     template_id?: string
+    summary: { question: string; answer: string | string[] }[]
 }

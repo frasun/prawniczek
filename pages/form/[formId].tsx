@@ -78,7 +78,7 @@ export function mapResponse({
     return {
         documentId: documentId || null,
         templateId,
-        formTitle: title,
+        title,
         questions: fields.map(
             (
                 {

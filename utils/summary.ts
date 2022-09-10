@@ -1,44 +1,56 @@
-import {
-    ComponentLib,
-    QuestionOptions,
-    FormAnswer,
-    FormQuestions,
-} from './types'
+import MESSAGES from '../constants/messages'
+import { FormAnswer, FormQuestions, Document } from './types'
 
-const textFields = [ComponentLib.shortText, ComponentLib.longText]
-
-export default function getItems(
+export default function getSummary(
     questions: FormQuestions,
-    answers: FormAnswer[]
-) {
-    const answerIds = answers.map((answer) => answer[0])
-    const filteredQuestions = questions.filter(({ id }) =>
-        answerIds.includes(id)
-    )
+    answers: FormAnswer
+): Document['summary'] {
+    let nextQuestion: string = questions[0].id
+    const summary = []
 
-    const items = filteredQuestions.map(({ options, type, title, id }) => {
-        const answerIndex = answerIds.findIndex((answer) => answer === id)
-        const value = answers[answerIndex][1]
+    while (nextQuestion !== MESSAGES.form.last) {
+        const currentQuestion = questions.find(({ id }) => id === nextQuestion)
 
-        const answer = textFields.includes(type)
-            ? value
-            : Array.isArray(value)
-            ? value.map((val) => getChoiceAnswer(val, options))
-            : getChoiceAnswer(value, options)
+        if (currentQuestion) {
+            const { options, next, title } = currentQuestion
+            let answerLabel: string | string[] = ''
 
-        return {
-            question: title,
-            answer,
+            if (answers.hasOwnProperty(nextQuestion)) {
+                const currentAnswer = answers[nextQuestion]
+                const hasOptions = Array.isArray(options)
+
+                if (hasOptions) {
+                    if (Array.isArray(currentAnswer)) {
+                        answerLabel = currentAnswer.map((answer) => {
+                            const a = options.find(
+                                (option) => option.ref === answer
+                            )
+                            return a?.label || ''
+                        })
+                        nextQuestion = next || MESSAGES.form.last
+                    } else {
+                        const selectedOption = options.find(
+                            (option) => option.ref === currentAnswer
+                        )
+                        if (selectedOption) {
+                            answerLabel = selectedOption.label
+                            nextQuestion = next || selectedOption.next
+                        }
+                    }
+                } else {
+                    nextQuestion = next || MESSAGES.form.last
+                    answerLabel = currentAnswer
+                }
+
+                summary.push({
+                    question: title,
+                    answer: answerLabel,
+                })
+            } else {
+                nextQuestion = MESSAGES.form.last
+            }
         }
-    })
+    }
 
-    return items
-}
-
-function getChoiceAnswer(
-    choiceRef: string,
-    options: QuestionOptions['options']
-) {
-    const el = options && options.find(({ ref }) => ref === choiceRef)
-    return el ? el.label : null
+    return summary
 }

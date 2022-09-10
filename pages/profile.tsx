@@ -14,10 +14,10 @@ import DocumentNameModal from '../components/documentNameModal'
 const Profile: FC<{ documents: Document[] }> = ({ documents }) => {
     const [documentName, setDocumentName] = useState<string>('')
     const [showModal, setShowModal] = useState<boolean>(false)
-    const [documentId, setDocumentId] = useState<number | undefined>()
+    const [documentId, setDocumentId] = useState<string | undefined>()
     const router = useRouter()
 
-    function editDocumentName(documentId: number, title: string) {
+    function editDocumentName(documentId: string, title: string) {
         setDocumentName(title)
         setDocumentId(documentId)
         setShowModal(true)
