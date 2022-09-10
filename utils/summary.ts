@@ -34,7 +34,12 @@ export default function getSummary(
                         )
                         if (selectedOption) {
                             answerLabel = selectedOption.label
-                            nextQuestion = next || selectedOption.next
+                            nextQuestion =
+                                next !== null
+                                    ? next
+                                    : selectedOption.next !== null
+                                    ? selectedOption.next
+                                    : MESSAGES.form.last
                         }
                     }
                 } else {

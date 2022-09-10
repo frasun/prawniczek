@@ -112,7 +112,7 @@ export function mapResponse({
                             : getNextQuestion(id, logic)
                         : fields[index + 1]
                         ? fields[index + 1].ref
-                        : null,
+                        : MESSAGES.form.last,
                     validation: hasLogic(logic, id)
                         ? getValidator(logic, id)
                         : null,
@@ -146,7 +146,7 @@ function getNextQuestionForChoice(
         ? logicItem
             ? logicItem.details.to.value
             : MESSAGES.form.last
-        : MESSAGES.form.last
+        : null
 }
 
 function getLogicItem(fieldWithLogic: LogicType, choiceRef: string) {
