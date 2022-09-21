@@ -9,7 +9,7 @@ import { FormTitle, Document, FormAnswer } from '../../../utils/types'
 import MESSAGES from '../../../constants/messages'
 import Breadcrumbs from '../../../components/breadcrumbs'
 import { User } from '../../../utils/useUser'
-import getSummary from '../../../utils/summary'
+import getSummary from '../../../utils/form'
 import DocumentNameModal from '../../../components/documentNameModal'
 
 interface SummaryProps {
@@ -47,12 +47,6 @@ const Summary: FC<SummaryProps> = ({ user, formId }) => {
         const form: Document = getFromStore(FORM)
         const formAnswers: FormAnswer = getFromStore(ANSWERS)
 
-        const handleRouteChange = (url: string) => {
-            if (!url.includes('redirect')) {
-                localStorage.clear()
-            }
-        }
-
         if (isLoading) {
             if (form && formAnswers) {
                 const { title, questions, document_id: documentId } = form
@@ -73,12 +67,6 @@ const Summary: FC<SummaryProps> = ({ user, formId }) => {
             } else {
                 router.push(`/`)
             }
-        }
-
-        router.events.on('routeChangeStart', handleRouteChange)
-
-        return () => {
-            router.events.off('routeChangeStart', handleRouteChange)
         }
     }, [router, isLoading])
 

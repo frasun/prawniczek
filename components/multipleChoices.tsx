@@ -16,7 +16,7 @@ const MultipleChoice: FC<MultipleChoiceProps> = ({
     return (
         <fieldset>
             {options &&
-                options.map(({ ref, label }) => (
+                options.map(({ ref, label, next }) => (
                     <div
                         className='form-control'
                         key={ref}>
@@ -29,6 +29,7 @@ const MultipleChoice: FC<MultipleChoiceProps> = ({
                                     onValueChange({
                                         ref,
                                         checked: e.target.checked,
+                                        next: next || null,
                                     })
                                 }
                             />

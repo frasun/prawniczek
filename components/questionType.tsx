@@ -12,6 +12,8 @@ function questionType({ type, ...props }: QuestionTypeOptions) {
             return <LongText {...(props as LongTextProps)} />
         case 'multiple_choice':
             return <MultipleChoice {...(props as MultipleChoiceProps)} />
+        case 'dropdown':
+            return <Radio {...(props as RadioProps)} />
         default:
             return <Radio {...(props as RadioProps)} />
     }

@@ -1,4 +1,4 @@
-import { FC, useState } from 'react'
+import { FC, useEffect, useState } from 'react'
 import Head from 'next/head'
 import Link from 'next/link'
 import { withIronSessionSsr } from 'iron-session/next'
@@ -16,6 +16,10 @@ const Profile: FC<{ documents: Document[] }> = ({ documents }) => {
     const [showModal, setShowModal] = useState<boolean>(false)
     const [documentId, setDocumentId] = useState<string | undefined>()
     const router = useRouter()
+
+    useEffect(() => {
+        localStorage.clear()
+    }, [])
 
     function editDocumentName(documentId: string, title: string) {
         setDocumentName(title)

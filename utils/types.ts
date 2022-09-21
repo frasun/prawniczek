@@ -5,6 +5,9 @@ export enum ComponentLib {
     longText = 'long_text',
     multipleChoice = 'multiple_choice',
     dropdown = 'dropdown',
+    group = 'group',
+    statement = 'statement',
+    date = 'date',
 }
 
 export type Choice = {
@@ -41,7 +44,7 @@ export type FieldType = {
     ref: string
     title: string
     type: ComponentLib
-    properties: { description: string; choices: Choice[] }
+    properties: { description: string; choices: Choice[]; fields?: FieldType[] }
     validations: {
         required: boolean
     }
@@ -64,14 +67,17 @@ export type LogicType = {
                 }
             }
             condition: {
-                vars: [
-                    {
-                        value: string
-                    }
-                ]
+                vars: LogicVar[]
+                op: string
             }
         }
     ]
+}
+
+export type LogicVar = {
+    type: string
+    value: string
+    vars?: LogicVar[]
 }
 
 export interface FormType {
@@ -86,7 +92,11 @@ export type Unarray<T> = T extends Array<infer U> ? U : T
 export type QuestionOptions = Unarray<FormType['form']['questions']>
 
 export type SingleChoiceAnswer = Omit<Required<Answer>, 'label'>
-export type MultiChoiceAnswer = { ref: string; checked: boolean }
+export type MultiChoiceAnswer = {
+    ref: string
+    checked: boolean
+    next: string | null
+}
 
 export interface QuestionTypeOptions {
     type: ComponentLib

@@ -1,4 +1,4 @@
-import { useState, useEffect, FC } from 'react'
+import { useState, useEffect, FC, useCallback } from 'react'
 import { useRouter } from 'next/router'
 import Head from 'next/head'
 import Link from 'next/link'
@@ -10,6 +10,7 @@ import MESSAGES from '../../../constants/messages'
 import { getFromStore } from '../../../utils/storage'
 import { FORM, ANSWERS } from '../../../constants/store'
 import validators, { validate } from '../../../utils/validators'
+import { getNextId } from '../../../utils/form'
 
 import {
     ComponentLib,
@@ -38,7 +39,7 @@ const Question: FC<QuestionComponent> = ({ formId, questionId }) => {
     )
     const [required, setRequired] = useState<QuestionOptions['required']>(false)
     const [options, setOptions] = useState<QuestionOptions['options']>(null)
-    const [nextId, setNextId] = useState<QuestionOptions['next']>(null)
+    const [nextId, setNextId] = useState<string | null>(null)
     const [validation, setValidation] =
         useState<QuestionOptions['validation']>(null)
     const [isFirstQuestion, setIsFirstQuestion] = useState(false)
@@ -61,12 +62,18 @@ const Question: FC<QuestionComponent> = ({ formId, questionId }) => {
         },
     ]
 
-    useEffect(() => {
-        const form: FormType['form'] = getFromStore(FORM)
-        const answers: { [key: string]: string | string[] } =
-            getFromStore(ANSWERS)
+    const setNext = useCallback(() => {
+        const nextQuestion = getNextId(questionId)
 
+        setNextId(nextQuestion)
+        setIsLastQuestion(nextQuestion ? false : true)
+    }, [questionId])
+
+    useEffect(() => {
         if (isLoading) {
+            const form: FormType['form'] = getFromStore(FORM)
+            const answers: { [key: string]: string | string[] } =
+                getFromStore(ANSWERS)
             if (form && answers) {
                 const { questions, title } = form
                 const currentQuestionIndex = questions.findIndex(
@@ -78,7 +85,6 @@ const Question: FC<QuestionComponent> = ({ formId, questionId }) => {
                     type,
                     options,
                     required,
-                    next,
                     validation,
                 } = questions[currentQuestionIndex]
                 const answer = answers[questionId]
@@ -91,25 +97,19 @@ const Question: FC<QuestionComponent> = ({ formId, questionId }) => {
                 setIsFirstQuestion(currentQuestionIndex === 0)
                 setIsLastQuestion(currentQuestionIndex === questions.length - 1)
                 setOptions(options)
-                setNextId(next)
                 setValidation(validation)
 
                 if (answer) {
                     setAnswer(answer)
                     setIsFilled(true)
-
-                    if (type === ComponentLib['dropdown'] && options) {
-                        const option = options.find(({ ref }) => ref === answer)
-                        option && setNextId(option.next)
-                    }
                 }
 
+                setNext()
+
                 setIsLoading(false)
-            } else {
-                router.push(`/form/${formId}`)
             }
         }
-    }, [questionId, isLoading, router, formId])
+    }, [questionId, isLoading, router, formId, setNext])
 
     function handleValueChange(
         val: SingleChoiceAnswer | MultiChoiceAnswer | string
@@ -121,17 +121,19 @@ const Question: FC<QuestionComponent> = ({ formId, questionId }) => {
         } else {
             handleTextChange(val as string)
         }
+
+        setNext()
     }
 
     function handleSingleChoiceChange(val: SingleChoiceAnswer) {
         const { next, ref } = val
+
         setNextId(next)
         saveAnswer(ref)
     }
 
     function handleMultipleChoiceChange(val: MultiChoiceAnswer) {
         const { ref, checked } = val
-
         const answers = getFromStore(ANSWERS)[questionId] || []
 
         if (checked) {
@@ -272,7 +274,7 @@ const Question: FC<QuestionComponent> = ({ formId, questionId }) => {
                                 {MESSAGES.form.back}
                             </button>
                         )}
-                        {!isLastQuestion && nextId !== MESSAGES.form.last && (
+                        {!isLastQuestion && (
                             <button
                                 onClick={goToNextQuestion}
                                 className='btn btn-sm'
@@ -280,7 +282,7 @@ const Question: FC<QuestionComponent> = ({ formId, questionId }) => {
                                 {MESSAGES.form.next}
                             </button>
                         )}
-                        {(isLastQuestion || nextId === MESSAGES.form.last) && (
+                        {isLastQuestion && (
                             <Link href={`/form/${formId}/summary`}>
                                 <button
                                     className='btn btn-sm'

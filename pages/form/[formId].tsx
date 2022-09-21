@@ -4,8 +4,13 @@ import { GetServerSideProps } from 'next'
 import { withIronSessionSsr } from 'iron-session/next'
 import { sessionOptions } from '../../utils/session'
 import { getFromApi } from '../../utils/api'
-import MESSAGES from '../../constants/messages'
-import { FormResponse, LogicType, FormType, Document } from '../../utils/types'
+import {
+    FormResponse,
+    LogicType,
+    FormType,
+    Document,
+    ComponentLib,
+} from '../../utils/types'
 
 const Form: FC<FormType> = ({ formId, form, firstQuestionId, answers }) => {
     const router = useRouter()
@@ -16,7 +21,7 @@ const Form: FC<FormType> = ({ formId, form, firstQuestionId, answers }) => {
         localStorage.setItem('form', JSON.stringify(form))
         localStorage.setItem('formAnswers', JSON.stringify(answers))
 
-        router.push(`${docId}/${firstQuestionId}`)
+        router.replace(`${docId}/${firstQuestionId}`)
     })
 
     return <progress className='progress'></progress>
@@ -50,12 +55,24 @@ export const getServerSideProps: GetServerSideProps = withIronSessionSsr(
             res.end()
         }
 
+        let groupFields: FormResponse['fields'] = []
+        for (const field of form.fields) {
+            if (field.type === ComponentLib.group) {
+                const subFields = field.properties.fields
+                if (subFields?.length) {
+                    groupFields = groupFields.concat(subFields)
+                }
+            } else {
+                groupFields.push(field)
+            }
+        }
+
         return {
             props: {
                 formId: templateId,
                 form: mapResponse({
                     title: form.title,
-                    fields: form.fields,
+                    fields: groupFields,
                     logic: form.logic,
                     documentId,
                     templateId,
@@ -80,22 +97,17 @@ export function mapResponse({
         templateId,
         title,
         questions: fields.map(
-            (
-                {
-                    ref: id,
-                    title,
-                    type,
-                    validations: { required },
-                    properties: { choices, description },
-                },
-                index: number,
-                fields
-            ) => {
+            ({
+                ref: id,
+                title,
+                type,
+                validations,
+                properties: { choices, description },
+            }) => {
                 const options = choices
                     ? choices.map(({ ref, label }) => ({
                           ref,
                           label,
-                          next: getNextQuestionForChoice(ref, id, logic),
                       }))
                     : null
 
@@ -103,56 +115,17 @@ export function mapResponse({
                     id,
                     title,
                     type,
-                    required,
+                    required: validations ? validations.required : false,
                     options,
                     description: description || null,
-                    next: hasLogic(logic, id)
-                        ? choices
-                            ? null
-                            : getNextQuestion(id, logic)
-                        : fields[index + 1]
-                        ? fields[index + 1].ref
-                        : MESSAGES.form.last,
                     validation: hasLogic(logic, id)
                         ? getValidator(logic, id)
                         : null,
+                    logic: hasLogic(logic, id) ? hasLogic(logic, id) : null,
                 }
             }
         ),
     }
-}
-
-function getNextQuestion(
-    questionRef: string,
-    logic: LogicType[]
-): string | null {
-    const el = hasLogic(logic, questionRef)
-    const jumpAction = el && el.actions.find(({ action }) => action === 'jump')
-
-    return jumpAction ? jumpAction.details.to.value : null
-}
-
-function getNextQuestionForChoice(
-    choiceRef: string,
-    questionRef: string,
-    logic: LogicType[]
-) {
-    const fieldWithLogic = hasLogic(logic, questionRef)
-    const logicItem = fieldWithLogic
-        ? getLogicItem(fieldWithLogic, choiceRef)
-        : undefined
-
-    return fieldWithLogic
-        ? logicItem
-            ? logicItem.details.to.value
-            : MESSAGES.form.last
-        : null
-}
-
-function getLogicItem(fieldWithLogic: LogicType, choiceRef: string) {
-    return fieldWithLogic.actions.find(({ condition: { vars } }) =>
-        vars.find(({ value }) => value === choiceRef)
-    )
 }
 
 function hasLogic(

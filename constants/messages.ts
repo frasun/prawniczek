@@ -12,7 +12,6 @@ const messages = {
     form: {
         next: 'Dalej',
         back: 'Cofnij',
-        last: 'LAST_QUESTION',
         finish: 'Podsumowanie',
     },
     forms: {
