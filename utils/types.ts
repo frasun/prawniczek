@@ -48,6 +48,7 @@ export type FieldType = {
     validations: {
         required: boolean
     }
+    groupId: string
 }
 
 export type LogicType = {
@@ -106,6 +107,7 @@ export interface QuestionTypeOptions {
     options?: Answer[] | null
     current?: string
     answer?: string | string[]
+    validationMessage?: string
 }
 
 export type FormTitle = FormType['form']['title']

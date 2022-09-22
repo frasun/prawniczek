@@ -57,13 +57,13 @@ export const getServerSideProps: GetServerSideProps = withIronSessionSsr(
 
         let groupFields: FormResponse['fields'] = []
         for (const field of form.fields) {
+            groupFields.push(field)
+
             if (field.type === ComponentLib.group) {
                 const subFields = field.properties.fields
                 if (subFields?.length) {
                     groupFields = groupFields.concat(subFields)
                 }
-            } else {
-                groupFields.push(field)
             }
         }
 

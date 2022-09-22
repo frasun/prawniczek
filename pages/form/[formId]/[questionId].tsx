@@ -246,22 +246,13 @@ const Question: FC<QuestionComponent> = ({ formId, questionId }) => {
                         {description && <p>{description}</p>}
                     </header>
 
-                    <div
-                        className={`w-full${
-                            validationMessage
-                                ? ' tooltip tooltip-error tooltip-bottom tooltip-open'
-                                : ''
-                        }`}
-                        data-tip={
-                            validationMessage ? validationMessage : undefined
-                        }>
-                        <QuestionType
-                            type={type}
-                            options={options}
-                            onValueChange={handleValueChange}
-                            answer={answer}
-                        />
-                    </div>
+                    <QuestionType
+                        type={type}
+                        options={options}
+                        onValueChange={handleValueChange}
+                        answer={answer}
+                        validationMessage={validationMessage}
+                    />
 
                     <footer
                         className={`flex w-full ${
