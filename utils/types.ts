@@ -8,6 +8,7 @@ export enum ComponentLib {
     group = 'group',
     statement = 'statement',
     date = 'date',
+    thankyou = 'thankyou',
 }
 
 export type Choice = {
@@ -58,6 +59,7 @@ export type LogicType = {
             action: string
             details: {
                 to: {
+                    type: string
                     value: string
                 }
                 target: {
@@ -123,5 +125,6 @@ export interface Document {
     answers: FormAnswer[]
     created_at: Date
     template_id?: string
+    form_id?: string
     summary: { question: string; answer: string | string[] }[]
 }

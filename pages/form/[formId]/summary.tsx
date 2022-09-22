@@ -44,12 +44,12 @@ const Summary: FC<SummaryProps> = ({ user, formId }) => {
     ]
 
     useEffect(() => {
-        const form: Document = getFromStore(FORM)
+        const form = getFromStore(FORM)
         const formAnswers: FormAnswer = getFromStore(ANSWERS)
 
         if (isLoading) {
             if (form && formAnswers) {
-                const { title, questions, document_id: documentId } = form
+                const { title, questions, documentId } = form
 
                 setFormTitle(title)
                 setDocumentName(title)

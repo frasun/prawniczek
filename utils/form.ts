@@ -66,10 +66,14 @@ export function getNextId(questionId: string) {
 
     const questionIndex =
         questions && questions.findIndex(({ id }) => id === questionId)
-    const currentQuestion = questions[questionIndex]
+    const { logic } = questions[questionIndex]
 
-    const actions = currentQuestion.logic ? currentQuestion.logic.actions : null
+    const actions = logic ? logic.actions : null
     let nextQuestion = null
+    const nextQuestionItem =
+        questionIndex < questions.length - 1
+            ? questions[questionIndex + 1].id
+            : null
 
     if (actions) {
         const jumpActions = actions.filter(({ action }) => action === 'jump')
@@ -77,41 +81,42 @@ export function getNextId(questionId: string) {
         for (let action of jumpActions) {
             const {
                 details: {
-                    to: { value },
+                    to: { type, value },
                 },
                 condition: { op, vars },
             } = action
 
             switch (op) {
                 case 'is': {
-                    const nextAction = findChoice(vars, answers)
-
-                    nextQuestion = nextAction ? value : null
-
+                    if (answers) {
+                        const nextAction = findChoice(vars, answers)
+                        nextQuestion = nextAction ? value : null
+                    }
                     break
                 }
                 case 'is_not': {
-                    const nextAction = findChoice(vars, answers)
-
-                    nextQuestion = nextAction ? null : value
-
+                    if (answers) {
+                        const nextAction = findChoice(vars, answers)
+                        nextQuestion = nextAction ? null : value
+                    }
                     break
                 }
                 case 'or': {
-                    const nextAction = vars.find(({ vars }) => {
-                        if (vars) {
-                            return findChoice(vars, answers)
-                        }
+                    if (answers) {
+                        const nextAction = vars.find(({ vars }) => {
+                            if (vars) {
+                                return findChoice(vars, answers)
+                            }
 
-                        return false
-                    })
+                            return false
+                        })
 
-                    nextQuestion = nextAction ? value : null
-
+                        nextQuestion = nextAction ? value : null
+                    }
                     break
                 }
                 case 'always': {
-                    nextQuestion = value
+                    nextQuestion = type !== 'thankyou' ? value : null
                     break
                 }
                 default:
@@ -120,13 +125,12 @@ export function getNextId(questionId: string) {
 
             if (nextQuestion) {
                 break
+            } else if (!answers) {
+                nextQuestion = nextQuestionItem
             }
         }
     } else {
-        nextQuestion =
-            questionIndex < questions.length - 1
-                ? questions[questionIndex + 1].id
-                : null
+        nextQuestion = nextQuestionItem
     }
 
     return nextQuestion

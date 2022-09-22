@@ -16,6 +16,7 @@ const Profile: FC<{ documents: Document[] }> = ({ documents }) => {
     const [showModal, setShowModal] = useState<boolean>(false)
     const [documentId, setDocumentId] = useState<string | undefined>()
     const router = useRouter()
+    const pageTitle = `${MESSAGES.global.appName} - ${MESSAGES.profile.title}`
 
     useEffect(() => {
         localStorage.clear()
@@ -42,7 +43,7 @@ const Profile: FC<{ documents: Document[] }> = ({ documents }) => {
         })
 
         if (response.ok) {
-            setDocumentName('')
+            //setDocumentName('')
             setDocumentId(undefined)
             setShowModal(false)
 
@@ -53,9 +54,7 @@ const Profile: FC<{ documents: Document[] }> = ({ documents }) => {
     return (
         <>
             <Head>
-                <title>
-                    {MESSAGES.global.appName} - {MESSAGES.profile.title}
-                </title>
+                <title>{pageTitle}</title>
             </Head>
             <header>
                 <h1 className='text-2xl font-bold'>{MESSAGES.profile.title}</h1>

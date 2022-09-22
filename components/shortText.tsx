@@ -1,9 +1,10 @@
-import { FC, useState } from 'react'
+import { FC, useState, useEffect } from 'react'
 import { QuestionTypeOptions } from '../utils/types'
 
 export enum InputType {
     text = 'text',
     password = 'password',
+    date = 'date',
 }
 
 export type ShortTextProps = Pick<
@@ -23,9 +24,15 @@ const ShortText: FC<ShortTextProps> = ({
     const propsValue = typeof answer === 'string' ? answer : ''
     const [value, setValue] = useState<string>(propsValue)
 
+    useEffect(() => {
+        setValue(propsValue)
+    }, [propsValue])
+
     function togglePasswordView() {
         setFieldType(
-            fieldType === InputType.text ? InputType.password : InputType.text
+            fieldType === InputType.password
+                ? InputType.text
+                : InputType.password
         )
     }
 

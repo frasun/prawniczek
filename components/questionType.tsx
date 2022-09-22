@@ -1,4 +1,4 @@
-import ShortText, { ShortTextProps } from './shortText'
+import ShortText, { InputType, ShortTextProps } from './shortText'
 import LongText, { LongTextProps } from './longText'
 import MultipleChoice, { MultipleChoiceProps } from './multipleChoices'
 import Radio, { RadioProps } from './radio'
@@ -11,10 +11,22 @@ function questionType({
 }: QuestionTypeOptions) {
     const component = getComponent(type)
 
-    function getComponent(type: ComponentLib) {
-        switch (type) {
+    function getComponent(Ctype: ComponentLib) {
+        switch (Ctype) {
             case 'short_text':
-                return <ShortText {...(props as ShortTextProps)} />
+                return (
+                    <ShortText
+                        {...(props as ShortTextProps)}
+                        type={InputType.text}
+                    />
+                )
+            case 'date':
+                return (
+                    <ShortText
+                        {...(props as ShortTextProps)}
+                        type={InputType.date}
+                    />
+                )
             case 'long_text':
                 return <LongText {...(props as LongTextProps)} />
             case 'multiple_choice':
@@ -23,9 +35,8 @@ function questionType({
                 return <Radio {...(props as RadioProps)} />
             case 'group':
             case 'statement':
-                return null
             default:
-                return <ShortText {...(props as ShortTextProps)} />
+                return null
         }
     }
 
