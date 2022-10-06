@@ -9,6 +9,7 @@ export enum ComponentLib {
     statement = 'statement',
     date = 'date',
     thankyou = 'thankyou',
+    number = 'number',
 }
 
 export type Choice = {

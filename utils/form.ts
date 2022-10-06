@@ -28,12 +28,12 @@ export default function getSummary(
 
                 if (hasOptions) {
                     if (Array.isArray(currentAnswer)) {
-                        answerLabel = currentAnswer.map((answer) => {
-                            const a = options.find(
-                                (option) => option.ref === answer
-                            )
-                            return a?.label || ''
-                        })
+                        answerLabel = []
+                        for (let option of options) {
+                            if (currentAnswer.includes(option.ref)) {
+                                answerLabel.push(option.label)
+                            }
+                        }
                     } else {
                         const selectedOption = options.find(
                             (option) => option.ref === currentAnswer

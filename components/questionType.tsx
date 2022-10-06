@@ -27,6 +27,13 @@ function questionType({
                         type={InputType.date}
                     />
                 )
+            case 'number':
+                return (
+                    <ShortText
+                        {...(props as ShortTextProps)}
+                        type={InputType.number}
+                    />
+                )
             case 'long_text':
                 return <LongText {...(props as LongTextProps)} />
             case 'multiple_choice':

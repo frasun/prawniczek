@@ -5,6 +5,7 @@ export enum InputType {
     text = 'text',
     password = 'password',
     date = 'date',
+    number = 'number',
 }
 
 export type ShortTextProps = Pick<
