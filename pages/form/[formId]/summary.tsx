@@ -11,6 +11,9 @@ import Breadcrumbs from '../../../components/breadcrumbs'
 import { User } from '../../../utils/useUser'
 import getSummary from '../../../utils/form'
 import DocumentNameModal from '../../../components/documentNameModal'
+import { getFromApi } from '../../../utils/api'
+import { mapFormResponse } from '../[formId]'
+import getDocument from '../../../utils/document'
 
 interface SummaryProps {
     user: User
@@ -24,7 +27,9 @@ const Summary: FC<SummaryProps> = ({ user, formId }) => {
     const [documentName, setDocumentName] = useState<string>(formTitle)
     const [showModal, setShowModal] = useState<boolean>(false)
     const [documentId, setDocumentId] = useState<string>('')
+    const [templateId, setTemplateId] = useState<string>('')
     const [summary, setSummary] = useState<Document['summary']>([])
+    const [documentData, setDocumentData] = useState<string[]>([])
 
     const pageTitle = `${MESSAGES.global.appName} - ${formTitle}`
 
@@ -49,11 +54,12 @@ const Summary: FC<SummaryProps> = ({ user, formId }) => {
 
         if (isLoading) {
             if (form && formAnswers) {
-                const { title, questions, documentId } = form
+                const { title, questions, documentId, templateId } = form
 
                 setFormTitle(title)
                 setDocumentName(title)
                 setDocumentId(documentId)
+                setTemplateId(templateId)
 
                 if (questions) {
                     setSummary(getSummary(questions, formAnswers))
@@ -70,9 +76,9 @@ const Summary: FC<SummaryProps> = ({ user, formId }) => {
         }
     }, [router, isLoading])
 
-    async function postDocument() {
+    async function postDocument(redirect = true) {
         const document = {
-            template_id: formId,
+            template_id: templateId,
             answers: JSON.stringify(getFromStore(ANSWERS)),
             summary,
             title: documentName,
@@ -86,7 +92,11 @@ const Summary: FC<SummaryProps> = ({ user, formId }) => {
             },
         })
 
-        handleDocumentChange(response)
+        if (redirect) {
+            handleDocumentChange(response)
+        } else {
+            return response.json()
+        }
     }
 
     async function updateDocument() {
@@ -121,6 +131,36 @@ const Summary: FC<SummaryProps> = ({ user, formId }) => {
     function handleDocumentChange(response: Response) {
         if (response.ok) {
             router.push('/profile')
+        }
+    }
+
+    async function previewDocument() {
+        setDocumentData(['loading'])
+
+        const template = await getFromApi('template', `/${templateId}`)
+
+        if (template.ok) {
+            const newDocument = await postDocument(false)
+            const { document_id: documentId } = template
+
+            if (newDocument.ok) {
+                const { document_id: newDocumentId } = newDocument
+                const document = await getFromApi(
+                    'document',
+                    `/${newDocumentId}`
+                )
+                const form = await getFromApi('form', `/${documentId}`)
+
+                const a = getDocument(
+                    mapFormResponse(form).questions,
+                    form.variables,
+                    document.summary
+                )
+
+                setDocumentData(a)
+            }
+        } else {
+            console.error('brak')
         }
     }
 
@@ -159,7 +199,19 @@ const Summary: FC<SummaryProps> = ({ user, formId }) => {
                             onClick={saveDocument}>
                             {MESSAGES.summary.saveDocument}
                         </button>
+                        <button
+                            className='btn btn-sm btn-primary ml-2'
+                            onClick={previewDocument}>
+                            Generuj dokument
+                        </button>
                     </footer>
+                    {documentData.length && (
+                        <aside>
+                            {documentData.map((p, ind) => (
+                                <p key={ind}>{p}</p>
+                            ))}
+                        </aside>
+                    )}
                     <DocumentNameModal
                         showModal={showModal}
                         setShowModal={setShowModal}

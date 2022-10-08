@@ -16,6 +16,7 @@ const API: ApiType = {
     magicLogin: `${publicRuntimeConfig.API_URL}/auth/verify_email/magic_login`,
     resendLink: `${publicRuntimeConfig.API_URL}/auth/magic-link`,
     signin: '/api/login',
+    template: `${publicRuntimeConfig.API_URL}/template`,
 }
 
 export async function getFromApi(

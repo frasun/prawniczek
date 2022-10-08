@@ -55,28 +55,15 @@ export const getServerSideProps: GetServerSideProps = withIronSessionSsr(
             res.end()
         }
 
-        let groupFields: FormResponse['fields'] = []
-        for (const field of form.fields) {
-            groupFields.push(field)
-
-            if (field.type === ComponentLib.group) {
-                const subFields = field.properties.fields
-                if (subFields?.length) {
-                    groupFields = groupFields.concat(subFields)
-                }
-            }
-        }
-
         return {
             props: {
                 formId: templateId,
-                form: mapResponse({
-                    title: form.title,
-                    fields: groupFields,
-                    logic: form.logic,
-                    documentId,
+                form: {
+                    documentId: documentId || null,
                     templateId,
-                }),
+                    variables: form.variables || null,
+                    ...mapFormResponse(form),
+                },
                 firstQuestionId: form.fields[0].ref,
                 answers,
             },
@@ -85,16 +72,32 @@ export const getServerSideProps: GetServerSideProps = withIronSessionSsr(
     sessionOptions
 )
 
-export function mapResponse({
-    title,
-    fields,
-    logic,
-    documentId,
-    templateId,
-}: FormResponse) {
+export function mapFormResponse(form: FormResponse) {
+    const { fields, title, logic } = form
+
+    let groupFields: FormResponse['fields'] = []
+    for (const field of fields) {
+        groupFields.push(field)
+
+        if (field.type === ComponentLib.group) {
+            const subFields = field.properties.fields
+            if (subFields?.length) {
+                groupFields = groupFields.concat(subFields)
+            }
+        }
+    }
+
     return {
-        documentId: documentId || null,
-        templateId,
+        ...mapResponse({
+            title,
+            fields: groupFields,
+            logic,
+        }),
+    }
+}
+
+export function mapResponse({ title, fields, logic }: FormResponse) {
+    return {
         title,
         questions: fields.map(
             ({

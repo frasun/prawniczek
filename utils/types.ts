@@ -38,8 +38,9 @@ export interface FormResponse {
     title: string
     fields: FieldType[]
     logic: LogicType[]
+    variables?: { [key: string]: string }
     documentId?: string
-    templateId: string
+    templateId?: string
 }
 
 export type FieldType = {
@@ -86,7 +87,10 @@ export type LogicVar = {
 
 export interface FormType {
     formId: string
-    form: ReturnType<typeof mapResponse>
+    form: ReturnType<typeof mapResponse> & {
+        documentId?: string
+        templateId?: string
+    }
     firstQuestionId: string
     answers: FormAnswer[]
 }
@@ -123,9 +127,14 @@ export interface Document {
     title: string
     template: FormTitle
     questions: FormQuestions
-    answers: FormAnswer[]
+    answers: FormAnswer
     created_at: Date
     template_id?: string
     form_id?: string
-    summary: { question: string; answer: string | string[] }[]
+    summary: {
+        question: string
+        questionId: string
+        answer: string | string[]
+        answerId?: string
+    }[]
 }

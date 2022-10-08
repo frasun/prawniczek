@@ -1,17 +1,11 @@
-import {
-    FormAnswer,
-    FormQuestions,
-    Document,
-    FormType,
-    LogicVar,
-} from './types'
+import { FormAnswer, FormQuestions, FormType, LogicVar } from './types'
 import { getFromStore } from './storage'
 import { FORM, ANSWERS } from '../constants/store'
 
 export default function getSummary(
     questions: FormQuestions,
     answers: FormAnswer
-): Document['summary'] {
+) {
     let nextQuestion: string | null = questions[0].id
     const summary = []
 
@@ -20,7 +14,8 @@ export default function getSummary(
 
         if (currentQuestion) {
             const { options, title, id } = currentQuestion
-            let answerLabel: string | string[] = ''
+            let answerLabel: string | string[] = '',
+                answerId: string | string[] | undefined
 
             if (answers.hasOwnProperty(nextQuestion)) {
                 const currentAnswer = answers[nextQuestion]
@@ -29,6 +24,7 @@ export default function getSummary(
                 if (hasOptions) {
                     if (Array.isArray(currentAnswer)) {
                         answerLabel = []
+                        answerId = String(currentAnswer)
                         for (let option of options) {
                             if (currentAnswer.includes(option.ref)) {
                                 answerLabel.push(option.label)
@@ -40,6 +36,7 @@ export default function getSummary(
                         )
                         if (selectedOption) {
                             answerLabel = selectedOption.label
+                            answerId = selectedOption.ref
                         }
                     }
                 } else {
@@ -48,21 +45,31 @@ export default function getSummary(
 
                 summary.push({
                     question: title,
+                    questionId: id,
                     answer: answerLabel,
+                    answerId: String(answerId),
                 })
             }
 
-            nextQuestion = getNextId(id)
+            nextQuestion = getNextId(id, questions, answers)
         }
     }
 
     return summary
 }
 
-export function getNextId(questionId: string) {
-    const answers = getFromStore(ANSWERS)[questionId]
-    const questions: FormType['form']['questions'] =
-        getFromStore(FORM).questions
+export function getNextId(
+    questionId: string,
+    UQuestions?: FormType['form']['questions'],
+    UAnswers?: FormAnswer
+) {
+    const answers =
+        UAnswers && UAnswers[questionId]
+            ? UAnswers[questionId]
+            : getFromStore(ANSWERS)[questionId]
+    const questions: FormType['form']['questions'] = UQuestions
+        ? UQuestions
+        : getFromStore(FORM).questions
 
     const questionIndex =
         questions && questions.findIndex(({ id }) => id === questionId)

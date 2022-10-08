@@ -19,7 +19,7 @@ async function docuemntRoute(req: NextApiRequest, res: NextApiResponse) {
             response = await putToApi('document', body, token)
         }
 
-        return response.ok ? res.status(200).end() : res.send(response)
+        return res.send(response)
     }
 
     return res.status(401).end()
