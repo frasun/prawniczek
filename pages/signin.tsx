@@ -15,7 +15,7 @@ const SignIn: FC = () => {
     const redirectTo = router.query.redirect
         ? {
               pathname: String(router.query.redirect),
-              query: { save: router.query.save },
+              query: { save: router.query.save, draft: router.query.draft },
           }
         : '/profile'
 

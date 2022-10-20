@@ -43,7 +43,7 @@ const Profile: FC<{ documents: Document[] }> = ({ documents }) => {
         })
 
         if (response.ok) {
-            //setDocumentName('')
+            setDocumentName('')
             setDocumentId(undefined)
             setShowModal(false)
 
@@ -67,6 +67,7 @@ const Profile: FC<{ documents: Document[] }> = ({ documents }) => {
                             title,
                             document_id: documentId,
                             template,
+                            document_created: documentCreated,
                         },
                         index
                     ) => (
@@ -86,6 +87,20 @@ const Profile: FC<{ documents: Document[] }> = ({ documents }) => {
                                     {MESSAGES.document.summary}
                                 </button>
                             </Link>
+                            {documentCreated ? (
+                                <Link href={`/document/${documentId}`}>
+                                    <button className='btn btn-sm btn-primary ml-2'>
+                                        {MESSAGES.document.preview}
+                                    </button>
+                                </Link>
+                            ) : (
+                                <Link href={`/form/${documentId}`}>
+                                    <button className='btn btn-sm btn-primary ml-2'>
+                                        {MESSAGES.document.edit}
+                                    </button>
+                                </Link>
+                            )}
+
                             <button
                                 className='btn btn-sm btn-primary ml-2'
                                 onClick={() =>
@@ -93,11 +108,6 @@ const Profile: FC<{ documents: Document[] }> = ({ documents }) => {
                                 }>
                                 {MESSAGES.document.rename}
                             </button>
-                            <Link href={`/form/${documentId}`}>
-                                <button className='btn btn-sm btn-primary ml-2'>
-                                    {MESSAGES.document.edit}
-                                </button>
-                            </Link>
                         </div>
                     )
                 )}

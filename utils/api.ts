@@ -67,7 +67,7 @@ export async function postToApi<T>(
 }
 
 export async function putToApi<T>(endpoint: string, params: T, token?: string) {
-    const response = await fetch(API[endpoint], {
+    const request = await fetch(API[endpoint], {
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json',
@@ -76,5 +76,12 @@ export async function putToApi<T>(endpoint: string, params: T, token?: string) {
         body: params ? JSON.stringify(params) : undefined,
     })
 
-    return await response.json()
+    const { status, ok } = request
+    const response = {
+        ...(await request.json()),
+        status,
+        ok,
+    }
+
+    return response
 }

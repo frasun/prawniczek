@@ -36,7 +36,8 @@ export const getServerSideProps: GetServerSideProps = withIronSessionSsr(
         let documentId,
             templateId = String(formId),
             answers = {},
-            document: Document
+            document: Document,
+            documentName = null
 
         if (token) {
             document = await getFromApi('document', `/${formId}`, token)
@@ -44,6 +45,7 @@ export const getServerSideProps: GetServerSideProps = withIronSessionSsr(
                 documentId = String(formId)
                 templateId = String(document.template_id)
                 answers = document.answers
+                documentName = document.title
             }
         }
 
@@ -59,6 +61,7 @@ export const getServerSideProps: GetServerSideProps = withIronSessionSsr(
             props: {
                 formId: templateId,
                 form: {
+                    documentName,
                     documentId: documentId || null,
                     templateId,
                     variables: form.variables || null,

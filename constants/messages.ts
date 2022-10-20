@@ -4,6 +4,7 @@ const messages = {
         singIn: 'Zaloguj się',
         singOut: 'Wyloguj się',
         singUp: 'Załóż konto',
+        save: 'Zapisz',
     },
     index: {
         action: 'Zaczynamy',
@@ -38,7 +39,8 @@ const messages = {
         empty: 'Brak dokumentów do wyświetlenia',
     },
     summary: {
-        saveDocument: 'Zapisz dokument',
+        saveAnswers: 'Zapisz odpowiedzi',
+        createDocument: 'Generuj dokument',
     },
     document: {
         createdAt: 'Utworzono',
@@ -47,6 +49,7 @@ const messages = {
         rename: 'Zmień nazwę',
         renamePlaceholder: 'Podaj nazwę dokumentu',
         edit: 'Edytuj',
+        preview: 'Podgląd',
     },
 }
 

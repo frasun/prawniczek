@@ -11,16 +11,12 @@ import Breadcrumbs from '../../../components/breadcrumbs'
 import { User } from '../../../utils/useUser'
 import getSummary from '../../../utils/form'
 import DocumentNameModal from '../../../components/documentNameModal'
-import { getFromApi } from '../../../utils/api'
-import { mapFormResponse } from '../[formId]'
-import getDocument from '../../../utils/document'
 
 interface SummaryProps {
     user: User
-    formId: string
 }
 
-const Summary: FC<SummaryProps> = ({ user, formId }) => {
+const Summary: FC<SummaryProps> = ({ user }) => {
     const router = useRouter()
     const [formTitle, setFormTitle] = useState<FormTitle>('')
     const [isLoading, setIsLoading] = useState<boolean>(true)
@@ -29,7 +25,7 @@ const Summary: FC<SummaryProps> = ({ user, formId }) => {
     const [documentId, setDocumentId] = useState<string>('')
     const [templateId, setTemplateId] = useState<string>('')
     const [summary, setSummary] = useState<Document['summary']>([])
-    const [documentData, setDocumentData] = useState<string[]>([])
+    const [isDraft, setIsDraft] = useState<boolean>(true)
 
     const pageTitle = `${MESSAGES.global.appName} - ${formTitle}`
 
@@ -54,10 +50,16 @@ const Summary: FC<SummaryProps> = ({ user, formId }) => {
 
         if (isLoading) {
             if (form && formAnswers) {
-                const { title, questions, documentId, templateId } = form
+                const {
+                    title,
+                    questions,
+                    documentId,
+                    templateId,
+                    documentName,
+                } = form
 
-                setFormTitle(title)
-                setDocumentName(title)
+                setFormTitle(documentName || title)
+                setDocumentName(documentName || title)
                 setDocumentId(documentId)
                 setTemplateId(templateId)
 
@@ -68,7 +70,7 @@ const Summary: FC<SummaryProps> = ({ user, formId }) => {
                 setIsLoading(false)
 
                 if (router.query.save) {
-                    setShowModal(true)
+                    saveDocument(router.query.draft === 'true')
                 }
             } else {
                 router.push(`/`)
@@ -76,12 +78,13 @@ const Summary: FC<SummaryProps> = ({ user, formId }) => {
         }
     }, [router, isLoading])
 
-    async function postDocument(redirect = true) {
+    async function postDocument(draft = false) {
         const document = {
             template_id: templateId,
             answers: JSON.stringify(getFromStore(ANSWERS)),
             summary,
             title: documentName,
+            document_created: draft,
         }
 
         const response = await fetch('/api/document', {
@@ -92,18 +95,15 @@ const Summary: FC<SummaryProps> = ({ user, formId }) => {
             },
         })
 
-        if (redirect) {
-            handleDocumentChange(response)
-        } else {
-            return response.json()
-        }
+        return response.json()
     }
 
-    async function updateDocument() {
+    async function updateDocument(documentCreated = false) {
         const document = {
-            document_id: formId,
+            document_id: documentId,
             answers: JSON.stringify(getFromStore(ANSWERS)),
             summary,
+            document_created: documentCreated,
         }
 
         const response = await fetch('/api/document', {
@@ -114,53 +114,49 @@ const Summary: FC<SummaryProps> = ({ user, formId }) => {
             },
         })
 
-        handleDocumentChange(response)
+        return response.json()
     }
 
-    function saveDocument() {
+    function saveDocument(draft = false) {
+        setIsDraft(draft)
+
         if (user?.isLoggedIn) {
-            documentId ? updateDocument() : setShowModal(true)
+            documentId ? saveChanges(true) : setShowModal(true)
         } else {
             router.push({
                 pathname: '/signin',
-                query: { redirect: window.location.href, save: true },
+                query: { redirect: window.location.href, save: true, draft },
             })
         }
     }
 
-    function handleDocumentChange(response: Response) {
-        if (response.ok) {
+    function handleNameSet() {
+        isDraft ? createDraft() : createDocument()
+    }
+
+    async function createDraft() {
+        const document = await postDocument()
+
+        if (document.ok) {
             router.push('/profile')
         }
     }
 
-    async function previewDocument() {
-        setDocumentData(['loading'])
+    async function saveChanges(documentCreated = false) {
+        const document = await updateDocument(documentCreated)
 
-        const template = await getFromApi('template', `/${templateId}`)
+        if (document.ok) {
+            documentCreated
+                ? router.push(`/document/${document.id}/`)
+                : router.push('/profile')
+        }
+    }
 
-        if (template.ok) {
-            const newDocument = await postDocument(false)
-            const { document_id: documentId } = template
+    async function createDocument() {
+        const document = await postDocument(true)
 
-            if (newDocument.ok) {
-                const { document_id: newDocumentId } = newDocument
-                const document = await getFromApi(
-                    'document',
-                    `/${newDocumentId}`
-                )
-                const form = await getFromApi('form', `/${documentId}`)
-
-                const a = getDocument(
-                    mapFormResponse(form).questions,
-                    form.variables,
-                    document.summary
-                )
-
-                setDocumentData(a)
-            }
-        } else {
-            console.error('brak')
+        if (document.ok) {
+            router.push(`/document/${document.document_id}/`)
         }
     }
 
@@ -194,30 +190,31 @@ const Summary: FC<SummaryProps> = ({ user, formId }) => {
                             </div>
                         ))}
                     <footer>
-                        <button
-                            className='btn btn-sm btn-primary'
-                            onClick={saveDocument}>
-                            {MESSAGES.summary.saveDocument}
-                        </button>
+                        {documentId ? (
+                            <button
+                                className='btn btn-sm btn-primary'
+                                onClick={() => saveChanges()}>
+                                {MESSAGES.summary.saveAnswers}
+                            </button>
+                        ) : (
+                            <button
+                                className='btn btn-sm btn-primary'
+                                onClick={() => saveDocument(true)}>
+                                {MESSAGES.summary.saveAnswers}
+                            </button>
+                        )}
                         <button
                             className='btn btn-sm btn-primary ml-2'
-                            onClick={previewDocument}>
-                            Generuj dokument
+                            onClick={() => saveDocument()}>
+                            {MESSAGES.summary.createDocument}
                         </button>
                     </footer>
-                    {documentData.length && (
-                        <aside>
-                            {documentData.map((p, ind) => (
-                                <p key={ind}>{p}</p>
-                            ))}
-                        </aside>
-                    )}
                     <DocumentNameModal
                         showModal={showModal}
                         setShowModal={setShowModal}
                         documentName={documentName}
                         setDocumentName={setDocumentName}
-                        handleSubmit={postDocument}
+                        handleSubmit={handleNameSet}
                     />
                 </>
             ) : (

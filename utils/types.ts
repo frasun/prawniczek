@@ -131,6 +131,7 @@ export interface Document {
     created_at: Date
     template_id?: string
     form_id?: string
+    document_created: boolean
     summary: {
         question: string
         questionId: string

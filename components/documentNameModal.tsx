@@ -44,7 +44,7 @@ const DocumentNameModal: FC<DocumentModalProps> = ({
                     className='btn btn-sm btn-primary'
                     disabled={documentName.length === 0}
                     onClick={handleSubmit}>
-                    {MESSAGES.summary.saveDocument}
+                    {MESSAGES.global.save}
                 </button>
             </div>
         </div>
